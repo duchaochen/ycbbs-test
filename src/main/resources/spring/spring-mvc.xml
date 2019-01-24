@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--扫描controller包-->
+    <context:component-scan base-package="com.ycbbs.crud.controller"/>
+
+    <!-- 开启aop，对类代理 -->
+    <aop:config proxy-target-class="true"/>
+    <!-- 开启shiro注解支持 -->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+    </bean>
+
+    <!--将springmvc不能处理的请求交给tomcat-->
+    <mvc:default-servlet-handler/>
+
+    <!--使用最新的适配器和映射器功能-->
+    <mvc:annotation-driven/>
+
+    <!--全局异常-->
+    <bean class="com.ycbbs.crud.exception.CustomExceptionResolver"/>
+
+    <!--拦截器-->
+    <mvc:interceptors>
+        <!--第一个拦截器-->
+      <mvc:interceptor>
+          <!--被拦截的请求-->
+          <mvc:mapping path="/registers/**"/>
+          <!--放行的请求-->
+          <mvc:exclude-mapping path="/registers/toregister"/>
+          <!--使用的拦截器-->
+          <bean class="com.ycbbs.crud.interceptor.MyInterceptor"/>
+      </mvc:interceptor>
+
+        <!--第二个拦截器-->
+        <mvc:interceptor>
+            <!--被拦截的请求-->
+            <mvc:mapping path="/registers/**"/>
+            <!--放行的请求-->
+            <mvc:exclude-mapping path="/registers/toregister"/>
+            <!--使用的拦截器-->
+            <bean class="com.ycbbs.crud.interceptor.MyInterceptor02"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

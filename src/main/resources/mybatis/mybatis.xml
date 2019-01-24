@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
+    <!--取别名-->
+    <typeAliases>
+        <package name="com.ycbbs.crud.entity"/>
+    </typeAliases>
+
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名,4.0以上会自动检测 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+        </plugin>
+    </plugins>
+    <mappers>
+        <mapper resource="mybatis/mappers/UserInfoMapper.xml"/>
+        <mapper resource="mybatis/mappers/PermissionInfoMapper.xml"/>
+    </mappers>
+</configuration>
