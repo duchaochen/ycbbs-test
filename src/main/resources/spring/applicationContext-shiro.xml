@@ -17,11 +17,14 @@
     <!-- Shiro 的Web过滤器 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
-        <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，请求此地址将由formAuthenticationFilter进行表单认证 -->
+        <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，
+        请求此地址将由formAuthenticationFilter进行表单认证,restfull下的无效 -->
         <property name="loginUrl" value="/login" />
-        <!--认证失败的跳转地址-->
+        <!--认证成功请求此地址,restfull下的无效-->
+        <property name="successUrl" value="/successUrl" />
+        <!--认证失败的跳转地址,restfull下的无效-->
         <property name="unauthorizedUrl" value="/refuse" />
-        <!-- 自定义filter配置 -->
+        <!-- 自定义filter配置  -->
         <property name="filters">
             <map>
                 <!-- 将自定义 的FormAuthenticationFilter注入shiroFilter中-->
@@ -32,15 +35,18 @@
         <!-- 过虑器链定义，从上向下顺序执行，一般将/**放在最下边 -->
         <property name="filterChainDefinitions">
             <value>
+                <!-- 所有匿名访问 -->
+                /login = anon
+                /register = anon
+                /validateUserName = anon
+                /validateEmail = anon
+                /validateTelephone = anon
+                /validateConfirmPassWord = anon
                 <!--退出,请求 /logout地址，shiro去清除session-->
                 /logout = logout
-                <!-- 所有匿名访问 -->
-                <!--/login = anon-->
                 <!--还有验证码的路径需要放开-->
-                
-                <!--所有的都需要认真-->
+                <!--所有的都需要认证-->
                 /** = authc
-
             </value>
         </property>
     </bean>
@@ -50,8 +56,10 @@
         <property name="realm" ref="userRealm" />
         <!-- 注入缓存管理器 -->
         <property name="cacheManager" ref="cacheManager"/>
-        <!-- 注入session管理器 -->
-        <property name="sessionManager" ref="sessionManager" />
+        <!--&lt;!&ndash; 注入session管理器 &ndash;&gt;-->
+        <!--<property name="sessionManager" ref="sessionManager" />-->
+        <!--注入记住我-->
+        <property name="rememberMeManager" ref="rememberMeManager"/>
     </bean>
 
     <!-- 自定义 realm -->
@@ -74,23 +82,48 @@
     </bean>
 
 
-    <!-- 会话管理器 -->
-    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-        <!-- session的失效时长，单位毫秒 -->
-        <property name="globalSessionTimeout" value="600000"/>
-        <!-- 删除失效的session -->
-        <property name="deleteInvalidSessions" value="true"/>
-    </bean>
+    <!--&lt;!&ndash; 会话管理器，暂时没有用到 &ndash;&gt;-->
+    <!--<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">-->
+        <!--&lt;!&ndash; session的失效时长，单位毫秒 &ndash;&gt;-->
+        <!--<property name="globalSessionTimeout" value="600000"/>-->
+        <!--&lt;!&ndash; 删除失效的session &ndash;&gt;-->
+        <!--<property name="deleteInvalidSessions" value="true"/>-->
+    <!--</bean>-->
 
 
-    <!-- 自定义form认证过虑器 -->
-    <!-- 基于Form表单的身份验证过滤器，不配置将也会注册此过虑器，表单中的用户账号、密码及loginurl将采用默认值，建议配置 -->
+    <!--暂时没有用到验证码所以不需要
+    &lt;!&ndash; 自定义form认证过虑器 &ndash;&gt;-->
+    <!--&lt;!&ndash; 基于Form表单的身份验证过滤器，不配置将也会注册此过虑器，表单中的用户账号、密码及loginurl将采用默认值，建议配置 &ndash;&gt;-->
+    <!--<bean id="formAuthenticationFilter"-->
+          <!--class="com.ycbbs.crud.realm.CustomFormAuthenticationFilter">-->
+        <!--&lt;!&ndash; 表单中账号的input名称 &ndash;&gt;-->
+        <!--<property name="usernameParam" value="username" />-->
+        <!--&lt;!&ndash; 表单中密码的input名称 &ndash;&gt;-->
+        <!--<property name="passwordParam" value="password" />-->
+        <!--&lt;!&ndash;表单中的记住我的checkbox名称&ndash;&gt;-->
+        <!--<property name="rememberMeParam" value="rememberMe" />-->
+    <!--</bean>-->
+    <!--这里需要使用自定义的input名称,如果有其它的验证码操作可以使用上面自定义的过滤器-->
     <bean id="formAuthenticationFilter"
-          class="com.ycbbs.crud.realm.CustomFormAuthenticationFilter">
+          class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
         <!-- 表单中账号的input名称 -->
         <property name="usernameParam" value="username" />
         <!-- 表单中密码的input名称 -->
         <property name="passwordParam" value="password" />
+        <!--表单中的记住我的checkbox名称-->
+        <property name="rememberMeParam" value="rememberMe" />
+    </bean>
+
+
+    <!--rememberMeManager管理器，写cookie，取出cookie生成用户信息-->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="rememberMeCookie"/>
+    </bean>
+    <!--记住我-->
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe"/>
+        <!--失效时间为30天-->
+        <property name="maxAge" value="2592000"/>
     </bean>
 
 </beans>

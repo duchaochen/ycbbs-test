@@ -2,7 +2,6 @@ package com.ycbbs.crud.service.impl;
 
 import com.ycbbs.crud.entity.PermissionInfo;
 import com.ycbbs.crud.mapper.PermissionInfoMapper;
-import com.ycbbs.crud.realm.CustomRealm;
 import com.ycbbs.crud.service.PermissionInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

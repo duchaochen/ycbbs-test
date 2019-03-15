@@ -2,12 +2,13 @@
          xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
     <!--diskStore：缓存数据持久化的目录 地址  -->
     <diskStore path="F:\develop\ehcache" />
+    <!-- diskPersistent="true"表示为永久保存-->
     <defaultCache
             maxElementsInMemory="1000"
             maxElementsOnDisk="10000000"
             eternal="false"
             overflowToDisk="false"
-            diskPersistent="false"
+            diskPersistent="true"
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
             diskExpiryThreadIntervalSeconds="120"

@@ -3,6 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycbbs.crud.mapper.PermissionInfoMapper">
 
+
     <resultMap id="permissionInfoMap" type="com.ycbbs.crud.entity.PermissionInfo">
         <id column="id" property="id" />
         <result column="name" property="name" />

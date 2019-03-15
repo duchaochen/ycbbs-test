@@ -1,17 +1,12 @@
 package com.ycbbs.crud.pojo;
 
-import lombok.Data;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 统一返回类
  */
 public class YcBbsResult {
 
     /**
-     * 错误代码，200，500...
+     * 错误代码，100:权限验证错误，200：所有成功，300:信息不合法,500:内部错误...
      */
     private Integer code;
     private String msg;

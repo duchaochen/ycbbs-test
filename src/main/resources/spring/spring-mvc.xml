@@ -32,26 +32,4 @@
     <!--全局异常-->
     <bean class="com.ycbbs.crud.exception.CustomExceptionResolver"/>
 
-    <!--拦截器-->
-    <mvc:interceptors>
-        <!--第一个拦截器-->
-      <mvc:interceptor>
-          <!--被拦截的请求-->
-          <mvc:mapping path="/registers/**"/>
-          <!--放行的请求-->
-          <mvc:exclude-mapping path="/registers/toregister"/>
-          <!--使用的拦截器-->
-          <bean class="com.ycbbs.crud.interceptor.MyInterceptor"/>
-      </mvc:interceptor>
-
-        <!--第二个拦截器-->
-        <mvc:interceptor>
-            <!--被拦截的请求-->
-            <mvc:mapping path="/registers/**"/>
-            <!--放行的请求-->
-            <mvc:exclude-mapping path="/registers/toregister"/>
-            <!--使用的拦截器-->
-            <bean class="com.ycbbs.crud.interceptor.MyInterceptor02"/>
-        </mvc:interceptor>
-    </mvc:interceptors>
 </beans>
