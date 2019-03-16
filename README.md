@@ -1,11 +1,11 @@
-#通用Mappr
+# 通用Mappr
     码云地址：https://gitee.com/free/Mapper/wikis/pages?sort_id=208197
     github地址:https://github.com/abel533/Mapper
-###mybatis的jdbc允许执行多条sql语句
+### mybatis的jdbc允许执行多条sql语句
     加上这个属性allowMultiQueries=true
     jdbc.url=jdbc:mysql://47.99.194.149:3306/yc_bbs?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 
-###1.配置的变化
+### 1.配置的变化
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <!--扫描所有dao接口的实现，加入到ioc容器中 -->
         <property name="basePackage" value="com.mybatis.plus.mapper"/>
@@ -17,14 +17,14 @@
         <property name="basePackage" value="com.mybatis.plus.mapper"/>
     </bean>
 
-###2.接口类变化
+### 2.接口类变化
     创建一个EmployeeMapper接口并且继承Mapper<Employee>
     这里需要注意的是通用接口中的tk.mybatis.mapper.common.Mapper而不是org的
     public interface EmployeeMapper extends Mapper<Employee> {
     }
     以上继承之后就已经有很多公用的增删改查的方法了。
     
-###3.创建一个service业务层来调用
+### 3.创建一个service业务层来调用
     @Service
     public class EmployeeService {
         @Autowired
@@ -40,7 +40,7 @@
         }
     }
 
-###4.错误信息
+### 4.错误信息
     1.  nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Table 'yc_bbs.employee' doesn't exist
         以上问题表示表名和实体类的名称不一致，所以我们需要使用@table注解@Table(name = "tabple_emp")
         @Data
@@ -71,7 +71,7 @@
         private Integer editEmpName;
         
         
-###mybatis-ehcache缓存整合
+### mybatis-ehcache缓存整合
     1.导入ehcache包
         <!--ehcache包-->
         <dependency>
@@ -128,7 +128,7 @@
               <property name="memoryStoreEvictionPolicy" value="LRU"/>
           </cache>
         
-###springmvc的拦截器、适配器（conversionService）、过滤器
+### springmvc的拦截器、适配器（conversionService）、过滤器
     1.过滤器和springmvc没有关系
     2.拦截器是处理请求的各个阶段的
     3.适配器conversionService是处理参数绑定阶段
@@ -154,7 +154,7 @@
     例如/admins/user/**=perms["user:add:*,user:modify:*"]，当有多个参数时必须每个参数都通过才通过，想当于isPermitedAll()方法。
     user:例如/admins/user/**=user没有参数表示必须存在用户, 身份认证通过或通过记住我认证通过的可以访问，当登入操作时不做检查
      
-###shiro简单使用  
+### shiro简单使用  
 
      1. 创建一个自定义的CustomRealm类，来做认证和授权使用的，需要继承AuthorizingRealm类,重写以下2个方法
         1)doGetAuthenticationInfo认证发放，所有需要认证的都会经过次方法
@@ -274,7 +274,7 @@
         3）将cacheManager注入到安全管理器(securityManager)中
         4）清空缓存,需要定义在CustomRealm类中，在权限更新的时候调用
         
-###shiro实现记住我
+### shiro实现记住我
     1.创建rememberMeManager管理器，记录cookie
       <!--rememberMeManager管理器，写cookie，取出cookie生成用户信息-->
       <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
