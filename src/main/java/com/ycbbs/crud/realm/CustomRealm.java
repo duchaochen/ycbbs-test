@@ -3,8 +3,8 @@ package com.ycbbs.crud.realm;
 import com.ycbbs.crud.entity.ActiveUser;
 import com.ycbbs.crud.entity.PermissionInfo;
 import com.ycbbs.crud.entity.UserInfo;
+import com.ycbbs.crud.service.LoginService;
 import com.ycbbs.crud.service.PermissionInfoService;
-import com.ycbbs.crud.service.UserInfoService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -24,7 +24,7 @@ public class CustomRealm extends AuthorizingRealm {
     @Autowired
     private PermissionInfoService permissionInfoService;
     @Autowired
-    private UserInfoService userInfoService;
+    private LoginService userInfoService;
     /**
      * Realm唯一名称
      * @return

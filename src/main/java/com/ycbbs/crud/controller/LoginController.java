@@ -4,8 +4,7 @@ import com.ycbbs.crud.entity.UserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.pojo.YcBbsResult;
 import com.ycbbs.crud.realm.CustomRealm;
-import com.ycbbs.crud.service.PermissionInfoService;
-import com.ycbbs.crud.service.UserInfoService;
+import com.ycbbs.crud.service.LoginService;
 import com.ycbbs.crud.utils.AccountValidatorUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -21,7 +20,7 @@ import java.util.Map;
 public class LoginController {
 
     @Autowired
-    private UserInfoService userInfoService;
+    private LoginService userInfoService;
     /**
      * 认证成功之后跳转的页面
      * @return
@@ -86,13 +85,24 @@ public class LoginController {
         //用户检查，如果注册信息不符合信息的将存进map中
         Map<String, String> stringStringMap = this.checkUserInfo(userInfo);
         if (stringStringMap.size() > 0) {
-            return YcBbsResult.build(300,"用户注册信息不合法",stringStringMap);
+            return YcBbsResult.build(300,"注册失败，错误信息请看object属性",stringStringMap);
         }
         boolean isSave = userInfoService.insertUserInfo(userInfo);
         if (!isSave) {
             return YcBbsResult.build(500, "内部错误:注册失败", stringStringMap);
         }
         return YcBbsResult.build(200,"注册成功",stringStringMap);
+    }
+
+    @CrossOrigin
+    @GetMapping("/active")
+    public YcBbsResult activeCode(String uid, String code) throws CustomException {
+
+        boolean isActive = userInfoService.updateActiveCode(uid, code);
+        if (isActive) {
+            return YcBbsResult.build(200,"激活成功");
+        }
+        return YcBbsResult.build(400,"激活失败");
     }
 
     /**
@@ -122,6 +132,10 @@ public class LoginController {
         } else if (6 > userInfo.getPassword().trim().length()
                 || userInfo.getPassword().trim().length() > 18) {
             erorrMap.put("erorrPassword","密码必须为6~18位!!!");
+        }
+
+        if (null == userInfo.getConfirmPassword() || !userInfo.getConfirmPassword().trim().equals(userInfo.getPassword())) {
+            erorrMap.put("erorrConfirmPassword","确认密码与密码不一致!!!");
         }
         //判断邮箱
         if (null == userInfo.getEmail() || "".equals(userInfo.getEmail().trim())) {

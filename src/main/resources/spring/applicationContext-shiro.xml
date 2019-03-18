@@ -41,7 +41,10 @@
                 /validateUserName = anon
                 /validateEmail = anon
                 /validateTelephone = anon
+                /validatePassword = anon
                 /validateConfirmPassWord = anon
+                /index.jsp = anon
+                /active = anon
                 <!--退出,请求 /logout地址，shiro去清除session-->
                 /logout = logout
                 <!--还有验证码的路径需要放开-->

@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -33,6 +34,11 @@ public class UserInfo implements Serializable {
      */
     @Column(name="password")
     private String  password;
+    /**
+     * 通用mybatis绑定时过滤此属性
+     */
+    @Transient
+    private String confirmPassword;
     /**
      * 真实名称
      */

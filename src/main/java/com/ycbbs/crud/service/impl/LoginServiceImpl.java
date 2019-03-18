@@ -3,15 +3,16 @@ package com.ycbbs.crud.service.impl;
 import com.ycbbs.crud.entity.UserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.mapper.UserInfoMapper;
-import com.ycbbs.crud.service.UserInfoService;
+import com.ycbbs.crud.service.LoginService;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.UUID;
 
 @Service
-public class UserInfoServiceImpl implements UserInfoService {
+public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -37,7 +38,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         String uuid = UUID.randomUUID().toString();
         userInfo.setUid(uuid);
         userInfo.setSalt(uuid);
-        userInfo.setState("0");
+        //暂时设置为全部都是激活状态
+        userInfo.setState("1");
         userInfo.setCode(uuid.substring(0, 8));
         Md5Hash md5Hash = new Md5Hash(userInfo.getPassword(),userInfo.getSalt(),1);
         String password = md5Hash.toString();
@@ -62,6 +64,27 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserInfo u = this.getUserinfo(str,status);
         int count = userInfoMapper.selectCount(u);
         if (count > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateActiveCode(String uid, String code) throws CustomException {
+
+        Example example = new Example(UserInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("uid",uid)
+                .andEqualTo("code",code);
+
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(uid);
+        if (null == userInfo) {
+            throw new CustomException("激活码与用户账号匹配无效");
+        } else if ("1".equals(userInfo.getState())) {
+            throw new CustomException("该账号无需再次激活");
+        }
+        int rows = userInfoMapper.updateByExampleSelective(new UserInfo().setState("1"),example);
+        if (rows > 0) {
             return true;
         }
         return false;
