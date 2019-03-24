@@ -3,7 +3,7 @@ package com.ycbbs.crud.realm;
 import com.ycbbs.crud.entity.ActiveUser;
 import com.ycbbs.crud.entity.PermissionInfo;
 import com.ycbbs.crud.entity.UserInfo;
-import com.ycbbs.crud.service.LoginService;
+import com.ycbbs.crud.service.UserInfoService;
 import com.ycbbs.crud.service.PermissionInfoService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -24,7 +24,7 @@ public class CustomRealm extends AuthorizingRealm {
     @Autowired
     private PermissionInfoService permissionInfoService;
     @Autowired
-    private LoginService userInfoService;
+    private UserInfoService userInfoService;
     /**
      * Realm唯一名称
      * @return
@@ -46,7 +46,11 @@ public class CustomRealm extends AuthorizingRealm {
         //判断用户是否存在
         UserInfo userInfo = userInfoService.selectUserInfoByUserName(username);
         if (userInfo == null) {
-            return null;
+            throw new AuthenticationException("账户不存在");
+        }
+        //账号未激活
+        if ("0".equals(userInfo.getState())) {
+            throw new AuthenticationException("账号未激活");
         }
         try {
             //开始封装权限

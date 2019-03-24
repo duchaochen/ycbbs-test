@@ -1,18 +1,21 @@
 package com.ycbbs.crud.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.UserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.mapper.UserInfoMapper;
-import com.ycbbs.crud.service.LoginService;
+import com.ycbbs.crud.service.UserInfoService;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
-public class LoginServiceImpl implements LoginService {
+public class UserInfoServiceImpl implements UserInfoService {
 
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -38,8 +41,6 @@ public class LoginServiceImpl implements LoginService {
         String uuid = UUID.randomUUID().toString();
         userInfo.setUid(uuid);
         userInfo.setSalt(uuid);
-        //暂时设置为全部都是激活状态
-        userInfo.setState("1");
         userInfo.setCode(uuid.substring(0, 8));
         Md5Hash md5Hash = new Md5Hash(userInfo.getPassword(),userInfo.getSalt(),1);
         String password = md5Hash.toString();
@@ -52,7 +53,6 @@ public class LoginServiceImpl implements LoginService {
         }
         return true;
     }
-
     /**
      * 邮箱判断
      * @param str
@@ -68,7 +68,13 @@ public class LoginServiceImpl implements LoginService {
         }
         return false;
     }
-
+    /**
+     * 用户激活
+     * @param uid, code
+     * @param code
+     * @return
+     * @throws CustomException
+     */
     @Override
     public boolean updateActiveCode(String uid, String code) throws CustomException {
 
@@ -89,11 +95,40 @@ public class LoginServiceImpl implements LoginService {
         }
         return false;
     }
+    /**
+     * 查询所有用户
+     * @param username
+     * @return
+     */
+    @Override
+    public PageInfo<UserInfo> selectKeyAll(String username, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        //查询所有书籍
+        List<UserInfo> userInfos = this.selectKeyAll(username);
 
+        PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfos);
+        return pageInfo;
+    }
+    /**
+     * 根据关键字查询所有用户
+     * @param keyname
+     * @return
+     */
+    @Override
+    public List<UserInfo> selectKeyAll(String keyname){
+        Example example = new Example(UserInfo.class);
+        if (null != keyname && !"".equals(keyname.trim())){
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andLike("username","%"+keyname+"%")
+                    .orLike("realname","%"+keyname+"%");
+        }
+        List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
+        return userInfos;
+    }
     /**
      * 根据状态来为userinfo赋值
      * @param str
-     * @param status
+     * @param status 0为手机号，1为邮箱
      * @return
      */
     private UserInfo getUserinfo(String str,int status) {

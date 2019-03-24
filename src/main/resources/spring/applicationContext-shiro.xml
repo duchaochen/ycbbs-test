@@ -36,7 +36,7 @@
         <property name="filterChainDefinitions">
             <value>
                 <!-- 所有匿名访问 -->
-                /login = anon
+                /loginApp = anon
                 /register = anon
                 /validateUserName = anon
                 /validateEmail = anon
@@ -45,6 +45,13 @@
                 /validateConfirmPassWord = anon
                 /index.jsp = anon
                 /active = anon
+                / = anon
+
+                <!--以下为暂时放开为匿名方式-->
+                /users/list = anon
+                /users/add = anon
+
+
                 <!--退出,请求 /logout地址，shiro去清除session-->
                 /logout = logout
                 <!--还有验证码的路径需要放开-->
