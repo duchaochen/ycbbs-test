@@ -6,8 +6,10 @@ import com.ycbbs.crud.entity.UserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.mapper.UserInfoMapper;
 import com.ycbbs.crud.service.UserInfoService;
+import com.ycbbs.crud.utils.SendMail;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -19,6 +21,20 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Autowired
     private UserInfoMapper userInfoMapper;
+
+    /**
+     * 邮件发送类
+     */
+    @Autowired
+    private SendMail sendMail;
+
+    /**
+     * 激活地址
+     */
+    @Value("${mail.url}")
+    private String url;
+    @Value("${mail.head}")
+    private String head;
     /**
      * 根据用户名查询
      * @param username
@@ -36,7 +52,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @return
      */
     @Override
-    public boolean insertUserInfo(UserInfo userInfo) throws CustomException {
+    public boolean insertUserInfo(UserInfo userInfo,String path) throws CustomException {
         //用来生成数据库的主键id非常不错。
         String uuid = UUID.randomUUID().toString();
         userInfo.setUid(uuid);
@@ -47,11 +63,53 @@ public class UserInfoServiceImpl implements UserInfoService {
         //将加密后的密码存入数据库
         userInfo.setPassword(password);
         userInfo.setLocked("0");
+        //暂时设置为全部都是激活状态,如果实行激活操作这里直接去掉
+        if (!"/register".equals(path)) {
+            userInfo.setState("1");
+        }
         int rows = userInfoMapper.insertSelective(userInfo);
         if (rows == 0) {
             throw new CustomException("系统错误，注册失败!!!");
         }
+        if ("/register".equals(path)) {
+            this.sendToMail(userInfo);
+        }
         return true;
+    }
+
+    private void sendToMail(UserInfo userInfo) {
+        String ativeUrl = url + "?method=active&uid="+userInfo.getUid()+"&code="+userInfo.getCode();
+        // 发送 HTML 消息, 可以插入html标签
+        StringBuilder msg = new StringBuilder();
+        msg.append("<style>" +
+                ".subject{\n" +
+                "        width:550px;\n" +
+                "        padding: 30px 30px 30px 100px;\n" +
+                "        margin: 0 auto;\n" +
+                "        background: rgb(235,237,240);\n" +
+                "        border-radius: 10px;\n" +
+                "    }\n" +
+                "    p{\n" +
+                "        font-size: 14px;\n" +
+                "    }\n" +
+                "    a{\n" +
+                "        font-size: 18px;\n" +
+                "    }");
+        msg.append("</style>\n" +
+                "<div style=\" padding-top: 50px; padding-bottom:200px;\">\n" +
+                "    <div class=\"subject\">\n" +
+                "        <h4>尊敬的"+userInfo.getEmail()+"，您好,</h4>\n" +
+                "        <p style=\"padding-left: 5px;\">感谢您使用猿程社区服务</p>\n" +
+                "        <p style=\"padding-left: 5px;\">请点击以下链接进行邮箱验证，以便开始使用您的猿程社区账户：</p>\n" +
+                "        <p style=\"padding-left: 5px;\">\n" +
+                "            <a href='" + ativeUrl + "'>"+ativeUrl+"</a>\n" +
+                "            </br>\n" +
+                "            如果您并未申请猿程社区服务账户，可能是其他用户误输入了您的邮箱地址。请忽略此邮件，或者联系我们。\n" +
+                "        </p>\n" +
+                "    </div>\n" +
+                "</div>");
+        //发送邮件
+        sendMail.sendMessage(userInfo.getEmail(),this.head,msg.toString());
     }
     /**
      * 邮箱判断

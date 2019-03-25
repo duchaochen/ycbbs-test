@@ -28,7 +28,8 @@
         <property name="filters">
             <map>
                 <!-- 将自定义 的FormAuthenticationFilter注入shiroFilter中-->
-                <entry key="authc" value-ref="formAuthenticationFilter" />
+                <!--<entry key="authc" value-ref="formAuthenticationFilter" />-->
+                <entry key="authc" value-ref="shiroLoginFilter"/>
             </map>
         </property>
 
@@ -114,8 +115,18 @@
         <!--<property name="rememberMeParam" value="rememberMe" />-->
     <!--</bean>-->
     <!--这里需要使用自定义的input名称,如果有其它的验证码操作可以使用上面自定义的过滤器-->
-    <bean id="formAuthenticationFilter"
-          class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+    <!--<bean id="formAuthenticationFilter"-->
+          <!--class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">-->
+        <!--&lt;!&ndash; 表单中账号的input名称 &ndash;&gt;-->
+        <!--<property name="usernameParam" value="username" />-->
+        <!--&lt;!&ndash; 表单中密码的input名称 &ndash;&gt;-->
+        <!--<property name="passwordParam" value="password" />-->
+        <!--&lt;!&ndash;表单中的记住我的checkbox名称&ndash;&gt;-->
+        <!--<property name="rememberMeParam" value="rememberMe" />-->
+    <!--</bean>-->
+
+    <!--设置无权限登录以restfull形式显示,这个是代替上面的默认过滤器-->
+    <bean id="shiroLoginFilter" class="com.ycbbs.crud.filter.ShiroLoginFileter">
         <!-- 表单中账号的input名称 -->
         <property name="usernameParam" value="username" />
         <!-- 表单中密码的input名称 -->

@@ -20,7 +20,7 @@ public interface UserInfoService {
      * @return
      * @throws CustomException
      */
-    boolean insertUserInfo(UserInfo userInfo) throws CustomException;
+    boolean insertUserInfo(UserInfo userInfo,String path) throws CustomException;
     /**
      *
      * @param email

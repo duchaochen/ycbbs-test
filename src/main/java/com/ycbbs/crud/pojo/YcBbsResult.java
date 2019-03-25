@@ -6,7 +6,13 @@ package com.ycbbs.crud.pojo;
 public class YcBbsResult {
 
     /**
-     * 错误代码，100:权限验证错误，200：所有成功，300:信息不合法,400:激活失败，500:内部错误...
+     * 错误代码:
+     *  100 : 权限验证错误
+     *  200 ：所有成功
+     *  300 : 信息不合法
+     *  302 : 身份信息未认证
+     *  400 : 激活失败
+     *  500 : 内部错误...
      */
     private Integer code;
     private String msg;

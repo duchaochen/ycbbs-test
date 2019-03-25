@@ -97,7 +97,7 @@ public class LoginController {
         if (isActive) {
             return YcBbsResult.build(200,"激活成功");
         }
-        return YcBbsResult.build(400,"激活失败");
+        return YcBbsResult.build(400,"激活失败,请重新激活，如果不成功，请联系管理员!!!");
     }
 
 

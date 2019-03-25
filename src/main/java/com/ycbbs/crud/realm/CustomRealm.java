@@ -50,7 +50,7 @@ public class CustomRealm extends AuthorizingRealm {
         }
         //账号未激活
         if ("0".equals(userInfo.getState())) {
-            throw new AuthenticationException("账号未激活");
+            throw new AuthenticationException("账号未激活,请尽快去绑定的邮箱激活!!!");
         }
         try {
             //开始封装权限

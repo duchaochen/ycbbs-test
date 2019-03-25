@@ -19,6 +19,7 @@ import java.util.Map;
 public class RedisterController {
     @Autowired
     private UserInfoService userInfoService;
+
     /**
      * 注册
      * @return
@@ -35,15 +36,12 @@ public class RedisterController {
         if (stringStringMap.size() > 0) {
             return YcBbsResult.build(300,"注册失败",stringStringMap);
         }
-        //暂时设置为全部都是激活状态,如果实行激活操作这里直接去掉
-        if (!"/register".equals(path)) {
-            userInfo.setState("1");
-        }
-        boolean isSave = userInfoService.insertUserInfo(userInfo);
+
+        boolean isSave = userInfoService.insertUserInfo(userInfo,path);
         if (!isSave) {
             return YcBbsResult.build(500, "内部错误:注册失败", stringStringMap);
         }
-        return YcBbsResult.build(200,"注册成功",stringStringMap);
+        return YcBbsResult.build(200,"注册成功,5秒内跳转到登录页面!!!",stringStringMap);
     }
     /**
      * 检查用户信息是否合法
