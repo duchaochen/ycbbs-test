@@ -47,40 +47,58 @@ public class LoginController {
     @PostMapping("/loginApp")
     public YcBbsResult login(@RequestBody UserInfo user) throws Exception {
         Subject currentUser = SecurityUtils.getSubject();
-        //表示是否登录过
-        if (!currentUser.isAuthenticated()) {
+        //表示是否登录过或者已经有了记住我
+        if (!currentUser.isAuthenticated() && !currentUser.isRemembered()) {
             UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(),user.getPassword());
             //表示是否登录过
-            if (!currentUser.isAuthenticated()) {
-                try {
-                    currentUser.login(token);
-                } catch (LockedAccountException e) {
-                    //5、身份验证失败
-                    return YcBbsResult.build(100,"账号被锁定!!!");
-                }catch (DisabledAccountException e) {
-                    //5、身份验证失败
-                    return YcBbsResult.build(100,"账号被禁用!!!");
-                }
-                catch (UnknownAccountException e) {
-                    //5、用户名错误
-                    return YcBbsResult.build(100,"用户名错误!!!");
-                }catch (ExcessiveAttemptsException e) {
-                    //5、登录失败次数过多
-                    return YcBbsResult.build(100,"登录失败次数过多!!!");
-                }catch (IncorrectCredentialsException e) {
-                    //5、密码错误
-                    return YcBbsResult.build(100,"密码错误!!!");
-                }catch (ExpiredCredentialsException e) {
-                    //5、过期的凭证
-                    return YcBbsResult.build(500,"过期的凭证");
-                }catch (AuthenticationException e) {
-                    //6、账号未激活
-                    return YcBbsResult.build(500,e.getMessage());
-                }
+            try {
+                //设置记住我
+                token.setRememberMe(true);
+                currentUser.login(token);
+            } catch (LockedAccountException e) {
+                //5、身份验证失败
+                return YcBbsResult.build(100,"账号被锁定!!!");
+            }catch (DisabledAccountException e) {
+                //5、身份验证失败
+                return YcBbsResult.build(100,"账号被禁用!!!");
+            }
+            catch (UnknownAccountException e) {
+                //5、用户名错误
+                return YcBbsResult.build(100,"用户名错误!!!");
+            }catch (ExcessiveAttemptsException e) {
+                //5、登录失败次数过多
+                return YcBbsResult.build(100,"登录失败次数过多!!!");
+            }catch (IncorrectCredentialsException e) {
+                //5、密码错误
+                return YcBbsResult.build(100,"密码错误!!!");
+            }catch (ExpiredCredentialsException e) {
+                //5、过期的凭证
+                return YcBbsResult.build(500,"过期的凭证");
+            }catch (AuthenticationException e) {
+                //6、账号未激活
+                return YcBbsResult.build(500,e.getMessage());
             }
         }
-        return this.successUrl();
+        System.out.println(SecurityUtils.getSubject().isRemembered());
+        return YcBbsResult.build(200,"认证成功",SecurityUtils.getSubject().getPrincipal());
     }
+
+    /**
+     * 判断是否记住我了
+     * @return
+     * @throws Exception
+     */
+    @CrossOrigin
+    @GetMapping("/rememberMe")
+    public YcBbsResult rememberMe() throws Exception {
+        Subject currentUser = SecurityUtils.getSubject();
+        //表示是否登录过
+        if (!currentUser.isAuthenticated() && !currentUser.isRemembered()) {
+            return YcBbsResult.build(303,"记住我失败");
+        }
+        return YcBbsResult.build(200,"已经记住我了无语再次登录！！！");
+    }
+
 
     /**
      * 激活

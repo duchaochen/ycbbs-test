@@ -38,6 +38,8 @@
             <value>
                 <!-- 所有匿名访问 -->
                 /loginApp = anon
+                <!--记住我-->
+                /rememberMe = anon
                 /register = anon
                 /validateUserName = anon
                 /validateEmail = anon
@@ -144,7 +146,8 @@
     <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
         <constructor-arg value="rememberMe"/>
         <!--失效时间为30天-->
-        <property name="maxAge" value="2592000"/>
+        <!--<property name="maxAge" value="2592000"/>-->
+        <property name="maxAge" value="100000"/>
     </bean>
 
 </beans>
