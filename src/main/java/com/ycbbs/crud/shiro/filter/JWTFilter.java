@@ -61,7 +61,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      * @Title: executeLogin @Description:@return 返回类型 @throws
      */
     @Override
-    protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean executeLogin(ServletRequest request, ServletResponse response) throws AuthenticationException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String authorization = httpServletRequest.getHeader("Authorization");
         if(StringUtils.isEmpty(authorization)) {
@@ -114,20 +114,17 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      * 但是这样做有一个缺点，就是不能够对GET,POST等请求进行分别过滤鉴权(因为我们重写了官方的方法)，但实际上对应用影响不大
      */
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws AuthenticationException {
         if (isLoginAttempt(request, response)) {
             try {
                 executeLogin(request, response);
             } catch (Exception e) {
-                LOGGER.error("ERROR:", e.getCause());
-                LOGGER.error("ERROR class:{}", e.getCause().getClass().getName());
-                Throwable throwable=e.getCause();
-                if(throwable instanceof AuthenticationException) {
+                if(e instanceof AuthenticationException) {
                     //接口未授权或无授权码
-                    response(request, response,1003,"接口未授权或无授权码");
+                    response(request, response,1003,e.getMessage());
                 }
-                else if(throwable instanceof CustomException) {
-                    response(request, response, 1000,throwable.getMessage());
+                else if(e instanceof CustomException) {
+                    response(request, response, 1000,e.getMessage());
                 }else {
                     response(request, response,500, "系统错误");
                 }

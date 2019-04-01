@@ -8,18 +8,9 @@
     <!-- Shiro 的Web过滤器 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
-        <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，
-        请求此地址将由formAuthenticationFilter进行表单认证,restfull下的无效 -->
-        <!--<property name="loginUrl" value="/login" />-->
-        <!--&lt;!&ndash;认证成功请求此地址,restfull下的无效&ndash;&gt;-->
-        <!--<property name="successUrl" value="/successUrl" />-->
-        <!--&lt;!&ndash;认证失败的跳转地址,restfull下的无效&ndash;&gt;-->
-        <!--<property name="unauthorizedUrl" value="/refuse" />-->
         <!-- 自定义filter配置  -->
         <property name="filters">
             <map>
-                <!-- 将自定义 的FormAuthenticationFilter注入shiroFilter中-->
-                <!--<entry key="authc" value-ref="formAuthenticationFilter" />-->
                 <entry key="jwt" value-ref="jwtFilter"/>
             </map>
         </property>
@@ -37,12 +28,13 @@
                 /validateConfirmPassWord = anon
                 /index.jsp = anon
                 /active = anon
+                <!--/rememberMe = anon-->
                 / = anon
+
 
                 <!--以下为暂时放开为匿名方式-->
                 <!--/users/list = anon-->
-                <!--/users/add = anon-->
-
+                /users/add = anon
 
                 <!--退出,请求 /logout地址，shiro去清除session-->
                 /logout = logout
@@ -65,21 +57,12 @@
 
     <!-- 自定义 realm -->
     <bean id="authRealm" class="com.ycbbs.crud.shiro.realm.AuthRealm">
-        <!--将认证需要的凭证匹配器注入到自定义realm中-->
-        <!--<property name="credentialsMatcher" ref="credentialsMatcher"/>-->
         <property name="authenticationCachingEnabled" value="true"/>
         <property name="authorizationCachingEnabled" value="true"/>
         <property name="authenticationCacheName" value="authenticationCache"/>
         <property name="authorizationCacheName" value="authorizationCache"/>
 
     </bean>
-
-    <!--&lt;!&ndash; 凭证匹配器 &ndash;&gt;-->
-    <!--<bean id="credentialsMatcher"-->
-    <!--class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">-->
-    <!--<property name="hashAlgorithmName" value="md5" />-->
-    <!--<property name="hashIterations" value="1" />-->
-    <!--</bean>-->
 
     <!-- 加缓存管理器,直接注入到securityManager安全管理器即可 -->
     <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
@@ -109,18 +92,5 @@
     <!--Shiro生命周期处理器-->
     <bean class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
-
-    <!--暂时没有用到验证码所以不需要
-    自定义form认证过虑器基于Form表单的身份验证过滤器，不配置将也会注册此过虑器，表单中的用户账号、
-    密码及loginurl将采用默认值，建议配置 &ndash;&gt;-->
-    <!--<bean id="formAuthenticationFilter"-->
-    <!--class="com.ycbbs.crud.shiro.filter.CustomFormAuthenticationFilter">-->
-    <!--&lt;!&ndash; 表单中账号的input名称 &ndash;&gt;-->
-    <!--<property name="usernameParam" value="username" />-->
-    <!--&lt;!&ndash; 表单中密码的input名称 &ndash;&gt;-->
-    <!--<property name="passwordParam" value="password" />-->
-    <!--&lt;!&ndash;表单中的记住我的checkbox名称&ndash;&gt;-->
-    <!--<property name="rememberMeParam" value="rememberMe" />-->
-    <!--</bean>-->
 </beans>
 

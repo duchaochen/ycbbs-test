@@ -116,7 +116,7 @@ public class RedisterController {
         else{
             UserInfo user = userInfoService.selectUserInfoByUserName(username.trim());
             if (null != user) {
-                return YcBbsResult.build(300,"用户名已存在!!!");
+                return YcBbsResult.build(301,"用户名已存在!!!");
             }
         }
         return YcBbsResult.build(200,"用户名可以使用!!!");
