@@ -8,13 +8,14 @@ import lombok.experimental.Accessors;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @Table(name="sys_user_role")
-public class UserRoleInfo {
+public class UserRoleInfo implements Serializable {
 
     @Id
     private String id;

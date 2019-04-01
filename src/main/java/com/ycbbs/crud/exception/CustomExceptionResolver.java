@@ -4,6 +4,7 @@ package com.ycbbs.crud.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ycbbs.crud.pojo.YcBbsResult;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -26,49 +27,52 @@ public class CustomExceptionResolver implements HandlerExceptionResolver {
                                          HttpServletResponse response,
                                          @Nullable Object handler, Exception e) {
         e.printStackTrace();
+        Integer code = 500;
         CustomException exception;
+
         if (e instanceof CustomException) {
             //表示自定义异常
             exception = (CustomException)e;
-        } else {
+        } else if (e instanceof UnauthorizedException) {
             //将改为自定义异常
-            exception = new CustomException("未知错误");
+            exception = new CustomException("无访问权限!!!");
+            code = 304;
+        } else if (e instanceof LockedAccountException) {
+            //身份验证失败
+            exception = new CustomException("账号被锁定!!!");
+            code = 100;
+        }else if (e instanceof DisabledAccountException) {
+            //身份验证失败
+            exception = new CustomException("账号被禁用!!!");
+            code = 100;
+        }else if (e instanceof UnknownAccountException) {
+            //用户名错误
+            exception = new CustomException("用户名错误!!!");
+            code = 100;
+        }else if (e instanceof ExcessiveAttemptsException) {
+            //登录失败次数过多
+            exception = new CustomException("登录失败次数过多!!!");
+            code = 100;
+        }else if (e instanceof IncorrectCredentialsException) {
+            //密码错误
+            exception = new CustomException("密码错误!!!");
+            code = 100;
+        }else if (e instanceof AuthenticationException) {
+            //密码错误
+            exception = new CustomException(e.getMessage());
+            code = 100;
         }
-        YcBbsResult result = YcBbsResult.build(500, exception.getMessage());
+        else {
+            //将改为自定义异常
+            exception = new CustomException("未知错误!!!");
+        }
+        YcBbsResult result = YcBbsResult.build(code, exception.getMessage());
         try {
             response.getWriter().write(new ObjectMapper().writeValueAsString(result));
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+
         return new ModelAndView();
     }
-
-//    /**
-//     * 转换shiro异常为自定义异常
-//     * @param request
-//     * @throws CustomException
-//     */
-//    private CustomException convertShiroException(HttpServletRequest request){
-//        //如果登陆失败从request中获取认证异常信息，shiroLoginFailure就是shiro异常类的全限定名
-//        String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
-//        //根据shiro返回的异常类路径判断，抛出指定异常信息
-//        if(exceptionClassName!=null) {
-//            if (LockedAccountException.class.getName().equals(exceptionClassName)) {
-//                //最终会抛给异常处理器
-//                return new CustomException("账号被锁定!!!");
-//            } else if (DisabledAccountException.class.getName().equals(exceptionClassName)) {
-//                return new CustomException("账号被禁用!!!");
-//            } else if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
-//                return new CustomException("身份验证失败!!!");
-//            } else if (ExcessiveAttemptsException.class.getName().equals(exceptionClassName)) {
-//                return new CustomException("登录失败次数过多!!!");
-//            } else if (IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
-//                return new CustomException("密码错误!!!");
-//            } else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
-//                return new CustomException("过期的凭证!!!");
-//            }
-//        }
-//        //最终在异常处理器生成未知错误
-//        return new CustomException("认证失败!!!");
-//    }
 }

@@ -8,13 +8,14 @@ import lombok.experimental.Accessors;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @Table(name="sys_role_permission")
-public class RolePermissionInfo {
+public class RolePermissionInfo implements Serializable {
 
     @Id
     private String id;

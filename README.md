@@ -165,7 +165,7 @@
         
      2. 然后将此CustomRealm类挂在到spring中，applicationContext-shiro.xml配置
         <!-- 自定义 realm -->
-        <bean id="userRealm" class="com.ycbbs.crud.realm.CustomRealm">
+        <bean id="userRealm" class="com.ycbbs.crud.shiro.realm.CustomRealm">
             <!--将认证需要的凭证匹配器注入到自定义realm中-->
             <property name="credentialsMatcher" ref="credentialsMatcher"/>
         </bean>
@@ -303,7 +303,7 @@
     3.自定义form认证过虑器,修改过滤去默认的接收前端传参的名称
       <!-- 基于Form表单的身份验证过滤器，不配置将也会注册此过虑器，表单中的用户账号、密码及loginurl将采用默认值，建议配置 -->
       <bean id="formAuthenticationFilter"
-            class="com.ycbbs.crud.realm.CustomFormAuthenticationFilter">
+            class="com.ycbbs.crud.shiro.filter.CustomFormAuthenticationFilter">
           <!-- 表单中账号的input名称 -->
           <property name="usernameParam" value="username" />
           <!-- 表单中密码的input名称 -->
@@ -311,3 +311,24 @@
           <!--表单中的记住我的checkbox名称-->
           <property name="rememberMeParam" value="rememberMe" />
       </bean>
+      
+### 在前后端分离情况下使用jwt+shiro来认证与授权
+    问题：在每次系统登录时使用currentUser.login(new JWTToken(token));进入realm来认证，认证成功之后
+    第二次访问其它controller有需要重新认证了，问题就在于前后端分离，后端认为每次请求的都是新的用户。
+    这个时候就需要我们做一个唯一的token在作为认证的标识，第二次或者第三次访问controller时根据token来获取验证了
+    token：就是将用户名加密的唯一码。
+    
+    1.每次访问时在ajax中的heaners中带一个token过来，
+        一般第一次是token是为空，所以在登录时后台给将登录的用户名和密码来生成一个token。
+        注意：需要在登录时将用户名密码跟数据库中匹配一次，如果对应在做其他业务.
+    2.需要一个jwt的过滤器以及自定义一个shiro的token类来创建token.
+    3.在过滤器中来使用token获取用户名和缓存或者数据库中查询得来的密码来做jwt校验，然后提交到realm中,
+        如果token为空那么就不会提交到realm
+    4.授权起作用必须要使用@RequiresPermissions注解，每次请求的contrller方法时遇到RequiresPermissions注解就会被拦截，
+    这个时候就可以在拦截器执行登录与授权就可以了。
+    
+    记住一定要在controller访问方法上面加上权限全解@RequiresPermissions，才会进入realm授权方法
+    
+    总结
+    
+    

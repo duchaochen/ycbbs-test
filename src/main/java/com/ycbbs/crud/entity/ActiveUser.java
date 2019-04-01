@@ -17,6 +17,11 @@ public class ActiveUser implements java.io.Serializable {
 	 * 用户账号
 	 */
 	private String username;
+
+	/**
+	 * 密码
+	 */
+	private String password;
 	/**
 	 * 用户名称
 	 */
@@ -29,6 +34,14 @@ public class ActiveUser implements java.io.Serializable {
 	 * 权限
 	 */
 	private List<PermissionInfo> permissions;
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public String getUsername() {
 		return username;

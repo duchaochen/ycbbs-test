@@ -3,17 +3,15 @@ package com.ycbbs.crud.controller;
 import com.ycbbs.crud.entity.UserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.pojo.YcBbsResult;
-import com.ycbbs.crud.realm.CustomRealm;
+import com.ycbbs.crud.shiro.jwt.JWTToken;
+import com.ycbbs.crud.shiro.jwt.JWTUtil;
 import com.ycbbs.crud.service.UserInfoService;
-import com.ycbbs.crud.utils.AccountValidatorUtil;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 public class LoginController {
@@ -46,41 +44,31 @@ public class LoginController {
     @CrossOrigin
     @PostMapping("/loginApp")
     public YcBbsResult login(@RequestBody UserInfo user) throws Exception {
+
+        //必须先查询，要不然密码加盐的算法没办法匹配上
+        UserInfo userInfo = userInfoService.selectUserInfoByUserName(user.getUsername());
+        if(userInfo == null){
+            return YcBbsResult.build(100,"用户名不存在");
+        }
+        //这里一定需要判断一下密码是否一致，要不然只需要用户名匹配就可以成功登录了。
+        Md5Hash md5Hash = new Md5Hash(user.getPassword(),userInfo.getSalt(),1);
+        String password = md5Hash.toString();
+        if(!password.equals(userInfo.getPassword())){
+            return YcBbsResult.build(100,"用户名或密码错误");
+        }
+
+        String token= JWTUtil.sign(user.getUsername(), password);
         Subject currentUser = SecurityUtils.getSubject();
         //表示是否登录过或者已经有了记住我
         if (!currentUser.isAuthenticated() && !currentUser.isRemembered()) {
-            UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(),user.getPassword());
             //表示是否登录过
-            try {
-                //设置记住我
-                token.setRememberMe(true);
-                currentUser.login(token);
-            } catch (LockedAccountException e) {
-                //5、身份验证失败
-                return YcBbsResult.build(100,"账号被锁定!!!");
-            }catch (DisabledAccountException e) {
-                //5、身份验证失败
-                return YcBbsResult.build(100,"账号被禁用!!!");
-            }
-            catch (UnknownAccountException e) {
-                //5、用户名错误
-                return YcBbsResult.build(100,"用户名错误!!!");
-            }catch (ExcessiveAttemptsException e) {
-                //5、登录失败次数过多
-                return YcBbsResult.build(100,"登录失败次数过多!!!");
-            }catch (IncorrectCredentialsException e) {
-                //5、密码错误
-                return YcBbsResult.build(100,"密码错误!!!");
-            }catch (ExpiredCredentialsException e) {
-                //5、过期的凭证
-                return YcBbsResult.build(500,"过期的凭证");
-            }catch (AuthenticationException e) {
-                //6、账号未激活
-                return YcBbsResult.build(500,e.getMessage());
-            }
+            currentUser.login(new JWTToken(token));
         }
-        System.out.println(SecurityUtils.getSubject().isRemembered());
-        return YcBbsResult.build(200,"认证成功",SecurityUtils.getSubject().getPrincipal());
+
+        System.out.println(currentUser.getPrincipals());
+        System.out.println(currentUser.isAuthenticated());
+
+        return YcBbsResult.build(200,"认证成功",currentUser.getPrincipal(),token);
     }
 
     /**
@@ -90,13 +78,15 @@ public class LoginController {
      */
     @CrossOrigin
     @GetMapping("/rememberMe")
+//    @RequiresAuthentication
+//    @RequiresPermissions("login:rememberMe")
     public YcBbsResult rememberMe() throws Exception {
         Subject currentUser = SecurityUtils.getSubject();
         //表示是否登录过
         if (!currentUser.isAuthenticated() && !currentUser.isRemembered()) {
             return YcBbsResult.build(303,"记住我失败");
         }
-        return YcBbsResult.build(200,"已经记住我了无语再次登录！！！");
+        return YcBbsResult.build(200,"已经记住我了无需再次登录！！！");
     }
 
 
@@ -117,6 +107,7 @@ public class LoginController {
         }
         return YcBbsResult.build(400,"激活失败,请重新激活，如果不成功，请联系管理员!!!");
     }
+
 
 
 
@@ -143,16 +134,16 @@ public class LoginController {
         return YcBbsResult.build(200,"测试无授权",subject.getPrincipal());
     }
 
-    /**
-     * 清空缓存(这个需要写在业务逻辑层)
-     */
-
-    @Autowired
-    private CustomRealm customRealm;
-    @CrossOrigin
-    @RequestMapping("/clearCache")
-    public YcBbsResult clearCache() throws CustomException {
-        customRealm.clearCached();
-        return YcBbsResult.build(200,"清空缓存成功!!!");
-    }
+//    /**
+//     * 清空缓存(这个需要写在业务逻辑层)
+//     */
+//
+//    @Autowired
+//    private CustomRealm customRealm;
+//    @CrossOrigin
+//    @RequestMapping("/clearCache")
+//    public YcBbsResult clearCache() throws CustomException {
+//        customRealm.clearCached();
+//        return YcBbsResult.build(200,"清空缓存成功!!!");
+//    }
 }

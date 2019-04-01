@@ -1,6 +1,6 @@
 package com.ycbbs.crud.exception;
 
-public class CustomException extends Exception {
+public class CustomException extends RuntimeException {
     private String message;
 
     @Override

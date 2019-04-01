@@ -1,4 +1,4 @@
-package com.ycbbs.crud.realm;
+package com.ycbbs.crud.shiro.filter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
