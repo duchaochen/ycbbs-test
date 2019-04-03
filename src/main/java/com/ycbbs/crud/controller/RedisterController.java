@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * 注册控制器
  */
+@RequestMapping("/api")
 @RestController
 public class RedisterController {
     @Autowired

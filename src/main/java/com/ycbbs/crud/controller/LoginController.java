@@ -15,6 +15,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/api")
 @RestController
 public class LoginController {
 
@@ -46,7 +47,6 @@ public class LoginController {
     @CrossOrigin
     @PostMapping("/loginApp")
     public YcBbsResult login(@RequestBody UserInfo user) throws Exception {
-
         //必须先查询，要不然密码加盐的算法没办法匹配上
         UserInfo userInfo = userInfoService.selectUserInfoByUserName(user.getUsername());
         if(userInfo == null){
@@ -73,24 +73,31 @@ public class LoginController {
         System.out.println(currentUser.isAuthenticated());
 
         return YcBbsResult.build(200,"认证成功",currentUser.getPrincipal(),token);
+
+//        return YcBbsResult.build(200,"认证成功");
+    }
+
+
+    @CrossOrigin
+    @RequestMapping("/loginUrl")
+    public YcBbsResult loginUrl(){
+        return YcBbsResult.build(200,"认证成功");
     }
 
     /**
-     * 判断是否记住我了
+     * 情况缓存
      * @return
      * @throws Exception
      */
     @CrossOrigin
-    @GetMapping("/rememberMe")
+    @GetMapping("/logout")
 //    @RequiresAuthentication
-//    @RequiresPermissions("login:rememberMe")
-    public YcBbsResult rememberMe()  {
+    public YcBbsResult logout()  {
         Subject currentUser = SecurityUtils.getSubject();
-        //表示是否登录过
-        if (!currentUser.isAuthenticated()) {
-            return YcBbsResult.build(303,"记住我失败");
-        }
-        return YcBbsResult.build(200,"已经记住我了无需再次登录！！！");
+//        if (currentUser.isAuthenticated()) {
+            currentUser.logout();
+//        }
+        return YcBbsResult.build(200,"缓存情况完成！！！");
     }
 
     /**

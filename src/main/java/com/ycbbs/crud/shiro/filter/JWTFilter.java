@@ -12,6 +12,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ycbbs.crud.entity.ActiveUser;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.pojo.YcBbsResult;
@@ -27,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -115,22 +115,44 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws AuthenticationException {
-        if (isLoginAttempt(request, response)) {
-            try {
-                executeLogin(request, response);
-            } catch (Exception e) {
-                if(e instanceof AuthenticationException) {
-                    //接口未授权或无授权码
-                    response(request, response,1003,e.getMessage());
-                }
-                else if(e instanceof CustomException) {
-                    response(request, response, 1000,e.getMessage());
-                }else {
-                    response(request, response,500, "系统错误");
-                }
-            }
+        if (null != getSubject(request, response)
+                && getSubject(request, response).isAuthenticated()) {
+            return true;//已经认证过直接放行
         }
-        return true;
+        return false;//转到拒绝访问处理逻辑
+    }
+
+    /**
+     * 如果认证错误就会执行这个
+     * @param request
+     * @param response
+     * @param mappedValue
+     * @return
+     * @throws Exception
+     */
+    @Override
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+        //检测header里面是否包含Authorization字段即可
+        if (!isLoginAttempt(request, response)) {
+            response(request, response,1001,"Token失效!!!");
+            return false;
+        }
+
+        try {
+            executeLogin(request, response);
+            //认证成功
+            return true;
+        } catch (Exception e) {
+            if (e instanceof AuthenticationException) {
+                //接口未授权或无授权码
+                response(request, response, 1003, e.getMessage());
+            } else if (e instanceof CustomException) {
+                response(request, response, 1000, e.getMessage());
+            } else {
+                response(request, response, 500, "系统错误");
+            }
+            return false;
+        }
     }
 
     /**
@@ -140,16 +162,22 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
+//
+//        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
+        httpServletResponse.setHeader("Access-control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers",
-                httpServletRequest.getHeader("Access-Control-Request-Headers"));
+//        httpServletResponse.setHeader("Access-Control-Allow-Headers",httpServletRequest.getHeader("Access-Control-Request-Headers"));
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+        httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
+        httpServletResponse.setHeader("Access-Control-Max-Age","1728000");
+        httpServletResponse.setHeader("Content-Type","application/json;charset=UTF-8");
+        httpServletResponse.setStatus(HttpStatus.OK.value());
         // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
         System.out.println(RequestMethod.OPTIONS.name());
         System.out.println(httpServletRequest.getMethod());
-        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
+        if (RequestMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())) {
             httpServletResponse.setStatus(HttpStatus.OK.value());
-            return false;
+            return true;
         }
         return super.preHandle(request, response);
     }
@@ -159,15 +187,19 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     private void response(ServletRequest req, ServletResponse resp,Integer statusCode, String msg) {
         HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-        httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        resp.reset();
+        //这句代码是设置系统返回的状态码，如果设置的是错误状态码，那么浏览器就直接拦截
+        httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
-        try (PrintWriter out = httpServletResponse.getWriter()) {
+
+        try (PrintWriter printWriter = httpServletResponse.getWriter())  {
+
             if(StringUtils.isEmpty(msg)) {
                 msg="Null Point Exception";
             }
-            String data = new Gson().toJson(YcBbsResult.build(statusCode, msg));
-            out.append(data);
+            String messages = new ObjectMapper().writeValueAsString(YcBbsResult.build(statusCode, msg));
+            printWriter.write(messages);
         } catch (IOException e) {
             LOGGER.error("ERROR IN WRITE RESPONSE:", e);
         }

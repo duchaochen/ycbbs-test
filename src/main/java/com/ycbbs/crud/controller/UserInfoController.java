@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserInfoController {
 
     @Autowired
@@ -25,7 +26,7 @@ public class UserInfoController {
      */
     @CrossOrigin
     @GetMapping("/list")
-    public PageInfo<UserInfo> register(String keyname,int pageIndex,int pageSize) throws CustomException {
+    public PageInfo<UserInfo> register(String keyname,Integer pageIndex,Integer pageSize) throws CustomException {
         PageInfo<UserInfo> pageInfo = userInfoService.selectKeyAll(keyname, pageIndex, pageSize);
         return pageInfo;
     }

@@ -18,7 +18,7 @@
 
     <!-- 开启aop，对类代理 -->
     <aop:config proxy-target-class="true"/>
-    <!-- 开启shiro注解支持 -->
+     <!--开启shiro注解支持-->
     <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager" />
     </bean>

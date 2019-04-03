@@ -8,6 +8,10 @@
     <!-- Shiro 的Web过滤器 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
+        <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，请求此地址将由formAuthenticationFilter进行表单认证 -->
+        <!--<property name="loginUrl" value="/loginUrl"/>-->
+        <!--通过unauthorizedUrl指定没有权限操作时跳转页面-->
+        <!--<property name="unauthorizedUrl" value="/unauthorizedUrl"/>-->
         <!-- 自定义filter配置  -->
         <property name="filters">
             <map>
@@ -19,25 +23,25 @@
         <property name="filterChainDefinitions">
             <value>
                 <!-- 所有匿名访问 -->
-                /loginApp = anon
-                /register = anon
-                /validateUserName = anon
-                /validateEmail = anon
-                /validateTelephone = anon
-                /validatePassword = anon
-                /validateConfirmPassWord = anon
+                /api/validateUserName = anon
+                /api/loginApp = anon
+                /api/register = anon
+                /api/rememberMe = anon
+                /api/validateEmail = anon
+                /api/validateTelephone = anon
+                /api/validatePassword = anon
+                /api/validateConfirmPassWord = anon
                 /index.jsp = anon
-                /active = anon
-                <!--/rememberMe = anon-->
-                / = anon
-
+                /api/active = anon
+                /api/ = anon
+                /api/logout = anon
 
                 <!--以下为暂时放开为匿名方式-->
                 <!--/users/list = anon-->
-                /users/add = anon
+                <!--/users/add = anon-->
 
                 <!--退出,请求 /logout地址，shiro去清除session-->
-                /logout = logout
+                <!--/logout = logout-->
                 <!--还有验证码的路径需要放开-->
                 <!--所有的都需要认证-->
                 /** = jwt
@@ -50,7 +54,6 @@
         <property name="realm" ref="authRealm" />
         <!-- 注入缓存管理器 -->
         <!--<property name="cacheManager" ref="cacheManager"/>-->
-
         <!-- 注入session管理器 -->
         <property name="sessionManager" ref="sessionManager" />
     </bean>
@@ -61,7 +64,6 @@
         <property name="authorizationCachingEnabled" value="true"/>
         <property name="authenticationCacheName" value="authenticationCache"/>
         <property name="authorizationCacheName" value="authorizationCache"/>
-
     </bean>
 
     <!-- 加缓存管理器,直接注入到securityManager安全管理器即可 -->
@@ -79,18 +81,18 @@
         <property name="deleteInvalidSessions" value="true"/>
     </bean>
 
-    <!--自动代理-->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
-        <property name="proxyTargetClass" value="true"/>
-    </bean>
+    <!--&lt;!&ndash;自动代理&ndash;&gt;-->
+    <!--<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">-->
+        <!--<property name="proxyTargetClass" value="true"/>-->
+    <!--</bean>-->
 
-    <!--使授权注解起作用-->
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="securityManager" ref="securityManager"/>
-    </bean>
+    <!--&lt;!&ndash;使授权注解起作用&ndash;&gt;-->
+    <!--<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">-->
+        <!--<property name="securityManager" ref="securityManager"/>-->
+    <!--</bean>-->
 
-    <!--Shiro生命周期处理器-->
-    <bean class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!--&lt;!&ndash;Shiro生命周期处理器&ndash;&gt;-->
+    <!--<bean class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>-->
 
 </beans>
 

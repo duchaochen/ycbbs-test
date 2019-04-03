@@ -36,9 +36,6 @@ public class AuthRealm extends AuthorizingRealm {
         return token instanceof JWTToken;
     }
 
-
-
-
     /**
      * @Title: doGetAuthenticationInfo
      * @Description: 获取认证信息
@@ -73,7 +70,7 @@ public class AuthRealm extends AuthorizingRealm {
             List<PermissionInfo> menuInfo = permissionInfoService.getMenuInfo(userInfo.getUid());
             activeUser.setUsername(userInfo.getUsername());
             activeUser.setRealname(userInfo.getRealname());
-            activeUser.setPassword(userInfo.getPassword());
+//            activeUser.setPassword(userInfo.getPassword());
             activeUser.setMenus(menuInfo);
             activeUser.setUserid(userInfo.getUid());
         } catch (Exception e) {
