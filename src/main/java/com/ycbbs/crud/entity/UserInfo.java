@@ -89,6 +89,20 @@ public class UserInfo implements Serializable {
      */
     @Column(name="locked")
     private String locked;
+    /**
+     * 是否删除(0为否，1为是)
+     */
+    @Column(name="deleted")
+    private String deleted;
+    /**
+     * 信息是否完整
+     */
+    @Column(name="completed")
+    private String completed;
+
+
+
+
 }
 
 

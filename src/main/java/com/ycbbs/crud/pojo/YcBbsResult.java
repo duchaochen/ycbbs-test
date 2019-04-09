@@ -108,4 +108,13 @@ public class YcBbsResult {
         YcBbsResult ycBbsResult = new YcBbsResult(code, msg, object,token);
         return ycBbsResult;
     }
+    @Override
+    public String toString() {
+        return "YcBbsResult{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", object=" + object +
+                ", token='" + token + '\'' +
+                '}';
+    }
 }

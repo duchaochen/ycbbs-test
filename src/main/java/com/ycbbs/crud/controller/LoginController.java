@@ -48,7 +48,7 @@ public class LoginController {
     @PostMapping("/loginApp")
     public YcBbsResult login(@RequestBody UserInfo user) throws Exception {
         //必须先查询，要不然密码加盐的算法没办法匹配上
-        UserInfo userInfo = userInfoService.selectUserInfoByUserName(user.getUsername());
+        UserInfo userInfo = userInfoService.selectUserInfoByUserName("",user.getUsername());
         if(userInfo == null){
             //用户名不存在
             throw new UnknownAccountException();
@@ -73,8 +73,6 @@ public class LoginController {
         System.out.println(currentUser.isAuthenticated());
 
         return YcBbsResult.build(200,"认证成功",currentUser.getPrincipal(),token);
-
-//        return YcBbsResult.build(200,"认证成功");
     }
 
 
@@ -91,12 +89,9 @@ public class LoginController {
      */
     @CrossOrigin
     @GetMapping("/logout")
-//    @RequiresAuthentication
     public YcBbsResult logout()  {
         Subject currentUser = SecurityUtils.getSubject();
-//        if (currentUser.isAuthenticated()) {
-            currentUser.logout();
-//        }
+        currentUser.logout();
         return YcBbsResult.build(200,"缓存情况完成！！！");
     }
 
@@ -117,43 +112,4 @@ public class LoginController {
         }
         return YcBbsResult.build(400,"激活失败,请重新激活，如果不成功，请联系管理员!!!");
     }
-
-
-
-
-
-
-    @CrossOrigin
-    @RequestMapping("/test02")
-    @RequiresPermissions("item:query")
-    public YcBbsResult test02() throws CustomException {
-        return YcBbsResult.build(200,"这个已授权:item:query");
-    }
-    @CrossOrigin
-    @RequestMapping("/test03")
-    @RequiresPermissions("item:update")
-    public YcBbsResult test03() throws CustomException {
-        Subject subject = SecurityUtils.getSubject();
-        return YcBbsResult.build(200,"这个已授权:item:update",subject.getPrincipal());
-    }
-    @CrossOrigin
-    @RequestMapping("/test04")
-    @RequiresPermissions("item:delete")
-    public YcBbsResult test04() throws CustomException {
-        Subject subject = SecurityUtils.getSubject();
-        return YcBbsResult.build(200,"测试无授权",subject.getPrincipal());
-    }
-
-//    /**
-//     * 清空缓存(这个需要写在业务逻辑层)
-//     */
-//
-//    @Autowired
-//    private CustomRealm customRealm;
-//    @CrossOrigin
-//    @RequestMapping("/clearCache")
-//    public YcBbsResult clearCache() throws CustomException {
-//        customRealm.clearCached();
-//        return YcBbsResult.build(200,"清空缓存成功!!!");
-//    }
 }

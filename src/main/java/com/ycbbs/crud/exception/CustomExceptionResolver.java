@@ -26,7 +26,7 @@ public class CustomExceptionResolver implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response,
                                          @Nullable Object handler, Exception e) {
-        e.printStackTrace();
+//        e.printStackTrace();
         Integer code = 500;
         CustomException exception;
 
@@ -67,6 +67,8 @@ public class CustomExceptionResolver implements HandlerExceptionResolver {
             exception = new CustomException("未知错误!!!");
         }
         YcBbsResult result = YcBbsResult.build(code, exception.getMessage());
+        System.out.println(result);
+
         try {
             response.getWriter().write(new ObjectMapper().writeValueAsString(result));
         } catch (IOException e1) {

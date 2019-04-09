@@ -8,17 +8,20 @@
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="type" property="type" />
-        <result column="url" property="url" />
+        <result column="component" property="component" />
         <result column="percode" property="percode" />
         <result column="parentid" property="parentid" />
         <result column="parentids" property="parentids" />
         <result column="sortstring" property="sortstring" />
         <result column="available" property="available" />
+        <result column="menued" property="menued" />
+        <result column="router" property="router" />
+        <result column="icon" property="icon" />
        <!--<association property=""-->
     </resultMap>
 
     <select id="getMenuInfo" parameterType="java.lang.String" resultMap="permissionInfoMap">
-      SELECT * FROM sys_permission WHERE id IN(
+      SELECT * FROM sys_permission WHERE id in(
         SELECT yc_permission_id FROM `sys_role_permission` WHERE yc_role_id IN(
             SELECT yc_role_id FROM `sys_user_role` WHERE yc_user_id=#{uid}
         )
@@ -26,7 +29,7 @@
     </select>
 
     <select id="getPermissionInfo" parameterType="java.lang.String" resultMap="permissionInfoMap">
-        SELECT * FROM sys_permission WHERE id IN(
+        SELECT * FROM sys_permission WHERE id in(
             SELECT yc_permission_id FROM `sys_role_permission` WHERE yc_role_id IN(
                 SELECT yc_role_id FROM `sys_user_role` WHERE yc_user_id=#{uid}
             )

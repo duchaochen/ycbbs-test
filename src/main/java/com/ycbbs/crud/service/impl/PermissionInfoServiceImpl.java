@@ -32,4 +32,6 @@ public class PermissionInfoServiceImpl implements PermissionInfoService {
     public List<PermissionInfo> getPermissionInfo(String uid) throws Exception {
         return permissionInfoMapper.getPermissionInfo(uid);
     }
+
+
 }

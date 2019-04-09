@@ -50,13 +50,17 @@ public class AuthRealm extends AuthorizingRealm {
         if (userName == null ) {
             throw new AuthenticationException("token不存在!!!");
         }
-        UserInfo userInfo = userInfoService.selectUserInfoByUserName(userName);
+        UserInfo userInfo = userInfoService.selectUserInfoByUserName("",userName);
         if (userInfo == null ) {
             throw new AuthenticationException("账户不存在!!!");
         }
         //验证用户名和密码
         if ( !JWTUtil.verify(token,userName,userInfo.getPassword())){
-            throw new AuthenticationException("账户不存在!!!");
+            throw new AuthenticationException("账号或密码不正确!!!");
+        }
+        //账号已被删除
+        if ("1".equals(userInfo.getDeleted())) {
+            throw new AuthenticationException("账号已被注销,请联系管理员找回!!!");
         }
         //账号未激活
         if ("0".equals(userInfo.getState())) {
@@ -73,8 +77,11 @@ public class AuthRealm extends AuthorizingRealm {
 //            activeUser.setPassword(userInfo.getPassword());
             activeUser.setMenus(menuInfo);
             activeUser.setUserid(userInfo.getUid());
+            //查询权限
+            List<PermissionInfo> permissionInfos = permissionInfoService.getPermissionInfo(activeUser.getUserid());
+            activeUser.setPermissions(permissionInfos);
         } catch (Exception e) {
-            e.printStackTrace();
+           throw new AuthenticationException("权限读取失败");
         }
 
         return new SimpleAuthenticationInfo(activeUser,token,token);
@@ -94,14 +101,12 @@ public class AuthRealm extends AuthorizingRealm {
         if(principal instanceof ActiveUser) {
             // 根据用户名去查询用户信息
             ActiveUser activeUser = (ActiveUser)principal;
-            //查询权限
-            List<PermissionInfo> permissionInfos = null;
+
             try {
-                permissionInfos = permissionInfoService.getPermissionInfo(activeUser.getUserid());
-                for (PermissionInfo permissionInfo : permissionInfos) {
-                    //将查询到授权信息填充到simpleAuthorizationInfo对象中,授权时使用
-                    simpleAuthorizationInfo.addStringPermission(permissionInfo.getPercode());
-                }
+                //查询权限
+                activeUser.getPermissions().stream().forEach(permiss->{
+                    simpleAuthorizationInfo.addStringPermission(permiss.getPercode());
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }

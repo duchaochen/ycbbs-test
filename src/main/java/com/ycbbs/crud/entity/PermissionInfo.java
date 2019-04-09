@@ -24,9 +24,13 @@ public class PermissionInfo {
      */
     private String type;
     /**
-     * 访问url地址
+     * 路由地址
      */
-    private String url;
+    private String router;
+    /**
+     * 前端组件的引用地址
+     */
+    private String component;
     /**
      * 权限代码字符串
      */
@@ -47,4 +51,12 @@ public class PermissionInfo {
      * 是否可用,1：可用，0不可用
      */
     private String available;
+    /**
+     * 是否在菜单上显示，1为是，0为否，0都表示为隐藏权限
+     */
+    private String menued;
+    /**
+     * 图标
+     */
+    private String icon;
 }

@@ -105,7 +105,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         }
         return true;
     }
-
     /**
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问 例如我们提供一个地址 GET /article 登入用户和游客看到的内容是不同的
      * 如果在这里返回了false，请求会被直接拦截，用户看不到任何东西 所以我们在这里返回true，Controller中可以通过
@@ -121,7 +120,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         }
         return false;//转到拒绝访问处理逻辑
     }
-
     /**
      * 如果认证错误就会执行这个
      * @param request
@@ -137,7 +135,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             response(request, response,1001,"Token失效!!!");
             return false;
         }
-
         try {
             executeLogin(request, response);
             //认证成功
@@ -149,12 +146,11 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             } else if (e instanceof CustomException) {
                 response(request, response, 1000, e.getMessage());
             } else {
-                response(request, response, 500, "系统错误");
+                response(request, response, 1000, "认证不成功");
             }
             return false;
         }
     }
-
     /**
      * 对跨域提供支持
      */

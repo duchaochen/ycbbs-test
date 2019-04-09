@@ -3,6 +3,7 @@ package com.ycbbs.crud.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.UserInfo;
+import com.ycbbs.crud.entity.querybean.UserInfoQueryBean;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.mapper.UserInfoMapper;
 import com.ycbbs.crud.service.UserInfoService;
@@ -35,16 +36,22 @@ public class UserInfoServiceImpl implements UserInfoService {
     private String url;
     @Value("${mail.head}")
     private String head;
+
     /**
-     * 根据用户名查询
-     * @param username
+     * 验证用户名是否存在(还要过滤自己原始用户名)，可以和前台注册共用此验证
+     * 登录时来根据用户名查询实体，直接将oldUserName为空，validaUserName值为当前用户名就可以查询到数据了
+     * @param oldUserName:原始用户名
+     * @param validaNewUserName:新用户名
      * @return
      */
     @Override
-    public UserInfo selectUserInfoByUserName(String username) {
-        UserInfo user = new UserInfo();
-        user.setUsername(username);
-        return userInfoMapper.selectOne(user);
+    public UserInfo selectUserInfoByUserName(String oldUserName,String validaNewUserName) {
+        Example example = new Example(UserInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("username",oldUserName==null?"":oldUserName.trim());
+        criteria.andEqualTo("username",validaNewUserName.trim());
+        List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
+        return userInfos.size() >0 ? userInfos.get(0) : null;
     }
     /**
      * 添加数据
@@ -112,15 +119,27 @@ public class UserInfoServiceImpl implements UserInfoService {
         sendMail.sendMessage(userInfo.getEmail(),this.head,msg.toString());
     }
     /**
-     * 邮箱判断
-     * @param str
-     * @param status 0:邮箱，1：手机号
+     * 验证邮箱/手机号是否存在(还要过滤自己原始邮箱/手机号)，可以和前台注册共用此验证
+     * @param oldEmailorPhone : 原始邮箱/手机号
+     * @param validaNewEmailorPhone  ： 新邮箱/手机号
+     * @param status  : 0 表示邮箱，1表示电话
      * @return
      */
     @Override
-    public boolean selectByObject(String str,int status) {
-        UserInfo u = this.getUserinfo(str,status);
-        int count = userInfoMapper.selectCount(u);
+    public boolean selectByObject(String oldEmailorPhone,String validaNewEmailorPhone,int status) {
+        Example example = new Example(UserInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        //邮箱
+        if (0 == status) {
+            criteria.andNotEqualTo("email",oldEmailorPhone == null ? "" : oldEmailorPhone);
+            criteria.andEqualTo("email",validaNewEmailorPhone);
+        }
+        //手机
+        else if (1 == status) {
+            criteria.andNotEqualTo("telephone",oldEmailorPhone == null ? "" : oldEmailorPhone);
+            criteria.andEqualTo("telephone",validaNewEmailorPhone);
+        }
+        int count = userInfoMapper.selectCountByExample(example);
         if (count > 0) {
             return true;
         }
@@ -155,47 +174,62 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
     /**
      * 查询所有用户
-     * @param username
+     * @param userInfoQueryBean
      * @return
      */
     @Override
-    public PageInfo<UserInfo> selectKeyAll(String username, int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum,pageSize);
+    public PageInfo<UserInfo> selectKeyAll(UserInfoQueryBean userInfoQueryBean) {
+
+        PageHelper.startPage(userInfoQueryBean.getPageNum(),userInfoQueryBean.getPageSize());
         //查询所有书籍
-        List<UserInfo> userInfos = this.selectKeyAll(username);
+        List<UserInfo> userInfos = this.selectAll(userInfoQueryBean);
 
         PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfos);
         return pageInfo;
     }
     /**
      * 根据关键字查询所有用户
-     * @param keyname
+     * @param userInfoQueryBean
      * @return
      */
     @Override
-    public List<UserInfo> selectKeyAll(String keyname){
+    public List<UserInfo> selectAll(UserInfoQueryBean userInfoQueryBean){
         Example example = new Example(UserInfo.class);
-        if (null != keyname && !"".equals(keyname.trim())){
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andLike("username","%"+keyname+"%")
-                    .orLike("realname","%"+keyname+"%");
+        Example.Criteria criteria = example.createCriteria();
+        if (null != userInfoQueryBean.getKeyword() && !"".equals(userInfoQueryBean.getKeyword().trim())){
+            criteria.andLike("username","%"+userInfoQueryBean.getKeyword()+"%")
+                    .orLike("realname","%"+userInfoQueryBean.getKeyword()+"%");
+        }
+        if (null != userInfoQueryBean.getState() && !"".equals(userInfoQueryBean.getState())
+                && !"全部".equals(userInfoQueryBean.getState())) {
+            criteria.andEqualTo("state",userInfoQueryBean.getState());
+        }
+        if (null != userInfoQueryBean.getLocked() && !"".equals(userInfoQueryBean.getLocked())
+                && !"全部".equals(userInfoQueryBean.getLocked())) {
+            criteria.andEqualTo("locked",userInfoQueryBean.getLocked());
+        }
+        if (null != userInfoQueryBean.getCompleted() && !"".equals(userInfoQueryBean.getCompleted())
+                && !"全部".equals(userInfoQueryBean.getLocked())) {
+            criteria.andEqualTo("completed",userInfoQueryBean.getCompleted());
+        }
+        if (null != userInfoQueryBean.getDeleted() && !"".equals(userInfoQueryBean.getDeleted())
+                && !"全部".equals(userInfoQueryBean.getDeleted())) {
+            criteria.andEqualTo("deleted",userInfoQueryBean.getDeleted());
         }
         List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
         return userInfos;
     }
     /**
-     * 根据状态来为userinfo赋值
-     * @param str
-     * @param status 0为手机号，1为邮箱
-     * @return
+     * 修改用户
+     * @param userInfo
      */
-    private UserInfo getUserinfo(String str,int status) {
-        UserInfo u = new UserInfo();
-        if (0 == status) {
-            u.setEmail(str);
-        } else if (1 == status) {
-            u.setTelephone(str);
+    @Override
+    public boolean updateUserInfo(UserInfo userInfo) {
+        if(null == userInfo.getUid() || "".equals(userInfo.getUid().trim())){
+            return false;
         }
-        return u;
+        int rows = userInfoMapper.updateByPrimaryKeySelective(userInfo);
+        if (rows > 0){return true;}
+        else {return false;}
     }
 }
