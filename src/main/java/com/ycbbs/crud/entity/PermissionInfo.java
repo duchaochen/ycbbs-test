@@ -14,13 +14,13 @@ import javax.persistence.Table;
 @Table(name="sys_permission")
 public class PermissionInfo {
     @Id
-    private String id;
+    private Long id;
     /**
      * 资源名称
      */
     private String name;
     /**
-     * 资源类型：menu,button,
+     * 资源类型：menu,permission,
      */
     private String type;
     /**
@@ -48,9 +48,9 @@ public class PermissionInfo {
      */
     private String sortstring;
     /**
-     * 是否可用,1：可用，0不可用
+     * 是否删除,1：删除，0未删除
      */
-    private String available;
+    private String deleted;
     /**
      * 是否在菜单上显示，1为是，0为否，0都表示为隐藏权限
      */

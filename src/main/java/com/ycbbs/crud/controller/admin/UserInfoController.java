@@ -24,7 +24,7 @@ public class UserInfoController {
     @CrossOrigin
     @GetMapping("/list")
     @RequiresPermissions("user:query")
-    public PageInfo<UserInfo> register(UserInfoQueryBean userInfoQueryBean) throws CustomException {
+    public PageInfo<UserInfo> queryUserInfoList(UserInfoQueryBean userInfoQueryBean) throws CustomException {
         PageInfo<UserInfo> pageInfo = userInfoService.selectKeyAll(userInfoQueryBean);
         return pageInfo;
     }

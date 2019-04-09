@@ -13,7 +13,7 @@
         <result column="parentid" property="parentid" />
         <result column="parentids" property="parentids" />
         <result column="sortstring" property="sortstring" />
-        <result column="available" property="available" />
+        <result column="deleted" property="deleted" />
         <result column="menued" property="menued" />
         <result column="router" property="router" />
         <result column="icon" property="icon" />
@@ -25,7 +25,7 @@
         SELECT yc_permission_id FROM `sys_role_permission` WHERE yc_role_id IN(
             SELECT yc_role_id FROM `sys_user_role` WHERE yc_user_id=#{uid}
         )
-      ) and type='menu'
+      ) and type='menu' and deleted='0'
     </select>
 
     <select id="getPermissionInfo" parameterType="java.lang.String" resultMap="permissionInfoMap">
@@ -33,6 +33,6 @@
             SELECT yc_permission_id FROM `sys_role_permission` WHERE yc_role_id IN(
                 SELECT yc_role_id FROM `sys_user_role` WHERE yc_user_id=#{uid}
             )
-        ) and type='permission'
+        ) and type='permission' and deleted='0'
     </select>
 </mapper>
