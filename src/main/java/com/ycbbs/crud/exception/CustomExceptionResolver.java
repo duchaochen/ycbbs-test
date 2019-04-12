@@ -26,7 +26,7 @@ public class CustomExceptionResolver implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response,
                                          @Nullable Object handler, Exception e) {
-//        e.printStackTrace();
+        e.printStackTrace();
         Integer code = 500;
         CustomException exception;
 

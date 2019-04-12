@@ -3,7 +3,7 @@ package com.ycbbs.crud.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.UserInfo;
-import com.ycbbs.crud.entity.querybean.UserInfoQueryBean;
+import com.ycbbs.crud.entity.querybean.QueryBeanUserInfo;
 import com.ycbbs.crud.exception.CustomException;
 
 import java.util.List;
@@ -40,16 +40,16 @@ public interface UserInfoService {
     boolean updateActiveCode(String uid, String code) throws CustomException;
     /**
      * 获取所有用户
-     * @param userInfoQueryBean
+     * @param queryBeanUserInfo
      * @return
      */
-    PageInfo<UserInfo> selectKeyAll(UserInfoQueryBean userInfoQueryBean);
+    PageInfo<UserInfo> selectKeyAll(QueryBeanUserInfo queryBeanUserInfo);
     /**
      * 获取所有用户
-     * @param userInfoQueryBean
+     * @param queryBeanUserInfo
      * @return
      */
-    List<UserInfo> selectAll(UserInfoQueryBean userInfoQueryBean);
+    List<UserInfo> selectAll(QueryBeanUserInfo queryBeanUserInfo);
     /**
      * 修改用户(软删除)
      * @param userInfo

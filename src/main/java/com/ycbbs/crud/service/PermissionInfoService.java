@@ -2,7 +2,9 @@ package com.ycbbs.crud.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.PermissionInfo;
-import com.ycbbs.crud.entity.querybean.PermissionQueryBean;
+import com.ycbbs.crud.entity.RolePermissionInfo;
+import com.ycbbs.crud.entity.querybean.QueryBeanPermission;
+import com.ycbbs.crud.entity.querybean.SaveBeanRolePermission;
 import com.ycbbs.crud.exception.CustomException;
 
 import java.util.List;
@@ -25,18 +27,18 @@ public interface PermissionInfoService{
     List<PermissionInfo> getPermissionInfo(String uid) throws CustomException;
     /**
      * 获取查询数据（带分页）
-     * @param permissionQueryBean
+     * @param queryBeanPermission
      * @return
      * @throws CustomException
      */
-    PageInfo<PermissionInfo> getPermissionKeyList(PermissionQueryBean permissionQueryBean)throws CustomException;
+    PageInfo<PermissionInfo> getPermissionKeyList(QueryBeanPermission queryBeanPermission)throws CustomException;
     /**
      * 获取查询数据
-     * @param permissionQueryBean
+     * @param queryBeanPermission
      * @return
      * @throws CustomException
      */
-    List<PermissionInfo> getPermissionList(PermissionQueryBean permissionQueryBean)throws CustomException;
+    List<PermissionInfo> getPermissionList(QueryBeanPermission queryBeanPermission)throws CustomException;
     /**
      * 获取所有menuList
      * @return
@@ -57,4 +59,6 @@ public interface PermissionInfoService{
      * @throws CustomException
      */
     boolean updatePermission(PermissionInfo permissionInfo) throws CustomException;
+
+
 }

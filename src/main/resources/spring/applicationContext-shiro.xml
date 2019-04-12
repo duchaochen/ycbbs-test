@@ -39,6 +39,7 @@
 
                 <!--以下为暂时放开为匿名方式-->
                 /api/permission/* = anon
+                /api/role/* = anon
 
                 <!--退出,请求 /logout地址，shiro去清除session-->
                 <!--/logout = logout-->

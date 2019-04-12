@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class PermissionQueryBean implements Serializable {
+public class QueryBeanPermission implements Serializable {
     /**
      * 字段名称
      */

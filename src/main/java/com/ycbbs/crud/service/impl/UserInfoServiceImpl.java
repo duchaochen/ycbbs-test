@@ -3,7 +3,7 @@ package com.ycbbs.crud.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.UserInfo;
-import com.ycbbs.crud.entity.querybean.UserInfoQueryBean;
+import com.ycbbs.crud.entity.querybean.QueryBeanUserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.mapper.UserInfoMapper;
 import com.ycbbs.crud.service.UserInfoService;
@@ -174,47 +174,49 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
     /**
      * 查询所有用户
-     * @param userInfoQueryBean
+     * @param queryBeanUserInfo
      * @return
      */
     @Override
-    public PageInfo<UserInfo> selectKeyAll(UserInfoQueryBean userInfoQueryBean) {
+    public PageInfo<UserInfo> selectKeyAll(QueryBeanUserInfo queryBeanUserInfo) {
 
-        PageHelper.startPage(userInfoQueryBean.getPageNum(),userInfoQueryBean.getPageSize());
+        PageHelper.startPage(queryBeanUserInfo.getPageNum(), queryBeanUserInfo.getPageSize());
         //查询所有书籍
-        List<UserInfo> userInfos = this.selectAll(userInfoQueryBean);
+        List<UserInfo> userInfos = this.selectAll(queryBeanUserInfo);
 
         PageInfo<UserInfo> pageInfo = new PageInfo<>(userInfos);
         return pageInfo;
     }
     /**
      * 根据关键字查询所有用户
-     * @param userInfoQueryBean
+     * @param queryBeanUserInfo
      * @return
      */
     @Override
-    public List<UserInfo> selectAll(UserInfoQueryBean userInfoQueryBean){
+    public List<UserInfo> selectAll(QueryBeanUserInfo queryBeanUserInfo){
         Example example = new Example(UserInfo.class);
-        Example.Criteria criteria = example.createCriteria();
-        if (null != userInfoQueryBean.getKeyword() && !"".equals(userInfoQueryBean.getKeyword().trim())){
-            criteria.andLike("username","%"+userInfoQueryBean.getKeyword()+"%")
-                    .orLike("realname","%"+userInfoQueryBean.getKeyword()+"%");
-        }
-        if (null != userInfoQueryBean.getState() && !"".equals(userInfoQueryBean.getState())
-                && !"全部".equals(userInfoQueryBean.getState())) {
-            criteria.andEqualTo("state",userInfoQueryBean.getState());
-        }
-        if (null != userInfoQueryBean.getLocked() && !"".equals(userInfoQueryBean.getLocked())
-                && !"全部".equals(userInfoQueryBean.getLocked())) {
-            criteria.andEqualTo("locked",userInfoQueryBean.getLocked());
-        }
-        if (null != userInfoQueryBean.getCompleted() && !"".equals(userInfoQueryBean.getCompleted())
-                && !"全部".equals(userInfoQueryBean.getLocked())) {
-            criteria.andEqualTo("completed",userInfoQueryBean.getCompleted());
-        }
-        if (null != userInfoQueryBean.getDeleted() && !"".equals(userInfoQueryBean.getDeleted())
-                && !"全部".equals(userInfoQueryBean.getDeleted())) {
-            criteria.andEqualTo("deleted",userInfoQueryBean.getDeleted());
+        if(null != queryBeanUserInfo){
+            Example.Criteria criteria = example.createCriteria();
+            if (null != queryBeanUserInfo.getKeyword() && !"".equals(queryBeanUserInfo.getKeyword().trim())){
+                criteria.andLike("username","%"+ queryBeanUserInfo.getKeyword()+"%")
+                        .orLike("realname","%"+ queryBeanUserInfo.getKeyword()+"%");
+            }
+            if (null != queryBeanUserInfo.getState() && !"".equals(queryBeanUserInfo.getState())
+                    && !"全部".equals(queryBeanUserInfo.getState())) {
+                criteria.andEqualTo("state", queryBeanUserInfo.getState());
+            }
+            if (null != queryBeanUserInfo.getLocked() && !"".equals(queryBeanUserInfo.getLocked())
+                    && !"全部".equals(queryBeanUserInfo.getLocked())) {
+                criteria.andEqualTo("locked", queryBeanUserInfo.getLocked());
+            }
+            if (null != queryBeanUserInfo.getCompleted() && !"".equals(queryBeanUserInfo.getCompleted())
+                    && !"全部".equals(queryBeanUserInfo.getLocked())) {
+                criteria.andEqualTo("completed", queryBeanUserInfo.getCompleted());
+            }
+            if (null != queryBeanUserInfo.getDeleted() && !"".equals(queryBeanUserInfo.getDeleted())
+                    && !"全部".equals(queryBeanUserInfo.getDeleted())) {
+                criteria.andEqualTo("deleted", queryBeanUserInfo.getDeleted());
+            }
         }
         List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
         return userInfos;

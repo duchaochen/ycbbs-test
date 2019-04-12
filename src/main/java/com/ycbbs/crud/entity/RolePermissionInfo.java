@@ -17,8 +17,6 @@ import java.io.Serializable;
 @Table(name="sys_role_permission")
 public class RolePermissionInfo implements Serializable {
 
-    @Id
-    private String id;
     /**
      * 角色id
      */

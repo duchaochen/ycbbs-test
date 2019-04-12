@@ -2,7 +2,7 @@ package com.ycbbs.crud.controller.admin;
 
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.UserInfo;
-import com.ycbbs.crud.entity.querybean.UserInfoQueryBean;
+import com.ycbbs.crud.entity.querybean.QueryBeanUserInfo;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.pojo.YcBbsResult;
 import com.ycbbs.crud.service.UserInfoService;
@@ -24,8 +24,8 @@ public class UserInfoController {
     @CrossOrigin
     @GetMapping("/list")
     @RequiresPermissions("user:query")
-    public PageInfo<UserInfo> queryUserInfoList(UserInfoQueryBean userInfoQueryBean) throws CustomException {
-        PageInfo<UserInfo> pageInfo = userInfoService.selectKeyAll(userInfoQueryBean);
+    public PageInfo<UserInfo> queryUserInfoList(QueryBeanUserInfo queryBeanUserInfo) throws CustomException {
+        PageInfo<UserInfo> pageInfo = userInfoService.selectKeyAll(queryBeanUserInfo);
         return pageInfo;
     }
     /**

@@ -7,7 +7,9 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +24,12 @@ public class RoleInfo implements Serializable{
      */
     private String name;
     /**
-     * 是否可用,1：可用，0不可用
+     * 1为删除,0为可用
      */
-    private String available;
-
+    private String deleted;
+    /**
+     * 权限集合
+     */
+    @Transient
+    private List<PermissionInfo> permissionInfos;
 }

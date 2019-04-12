@@ -2,10 +2,9 @@ package com.ycbbs.crud.controller.admin;
 
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.PermissionInfo;
-import com.ycbbs.crud.entity.querybean.PermissionQueryBean;
+import com.ycbbs.crud.entity.querybean.QueryBeanPermission;
 import com.ycbbs.crud.pojo.YcBbsResult;
 import com.ycbbs.crud.service.PermissionInfoService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +27,8 @@ public class PermissionController {
     @CrossOrigin
     @GetMapping("/list")
 //    @RequiresPermissions("permission:query")
-    public PageInfo<PermissionInfo> queryPermission(PermissionQueryBean permissionQueryBean) throws Exception {
-        PageInfo<PermissionInfo> permissionKeyList = permissionInfoService.getPermissionKeyList(permissionQueryBean);
+    public PageInfo<PermissionInfo> queryPermission(QueryBeanPermission queryBeanPermission) throws Exception {
+        PageInfo<PermissionInfo> permissionKeyList = permissionInfoService.getPermissionKeyList(queryBeanPermission);
         return permissionKeyList;
     }
 
