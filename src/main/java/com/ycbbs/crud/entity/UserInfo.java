@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -99,10 +100,11 @@ public class UserInfo implements Serializable {
      */
     @Column(name="completed")
     private String completed;
-
-
-
-
+    /**
+     * 用户的角色
+     */
+    @Transient
+    private List<RoleInfo> roleInfos;
 }
 
 

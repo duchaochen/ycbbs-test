@@ -3,7 +3,9 @@ package com.ycbbs.crud.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ycbbs.crud.entity.UserInfo;
+import com.ycbbs.crud.entity.UserRoleInfo;
 import com.ycbbs.crud.entity.querybean.QueryBeanUserInfo;
+import com.ycbbs.crud.entity.querybean.SaveBeanUserInfoRole;
 import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.mapper.UserInfoMapper;
 import com.ycbbs.crud.service.UserInfoService;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -194,31 +197,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     @Override
     public List<UserInfo> selectAll(QueryBeanUserInfo queryBeanUserInfo){
-        Example example = new Example(UserInfo.class);
-        if(null != queryBeanUserInfo){
-            Example.Criteria criteria = example.createCriteria();
-            if (null != queryBeanUserInfo.getKeyword() && !"".equals(queryBeanUserInfo.getKeyword().trim())){
-                criteria.andLike("username","%"+ queryBeanUserInfo.getKeyword()+"%")
-                        .orLike("realname","%"+ queryBeanUserInfo.getKeyword()+"%");
-            }
-            if (null != queryBeanUserInfo.getState() && !"".equals(queryBeanUserInfo.getState())
-                    && !"全部".equals(queryBeanUserInfo.getState())) {
-                criteria.andEqualTo("state", queryBeanUserInfo.getState());
-            }
-            if (null != queryBeanUserInfo.getLocked() && !"".equals(queryBeanUserInfo.getLocked())
-                    && !"全部".equals(queryBeanUserInfo.getLocked())) {
-                criteria.andEqualTo("locked", queryBeanUserInfo.getLocked());
-            }
-            if (null != queryBeanUserInfo.getCompleted() && !"".equals(queryBeanUserInfo.getCompleted())
-                    && !"全部".equals(queryBeanUserInfo.getLocked())) {
-                criteria.andEqualTo("completed", queryBeanUserInfo.getCompleted());
-            }
-            if (null != queryBeanUserInfo.getDeleted() && !"".equals(queryBeanUserInfo.getDeleted())
-                    && !"全部".equals(queryBeanUserInfo.getDeleted())) {
-                criteria.andEqualTo("deleted", queryBeanUserInfo.getDeleted());
-            }
-        }
-        List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
+        List<UserInfo> userInfos = userInfoMapper.getUserRoleList(queryBeanUserInfo);
         return userInfos;
     }
     /**
@@ -233,5 +212,30 @@ public class UserInfoServiceImpl implements UserInfoService {
         int rows = userInfoMapper.updateByPrimaryKeySelective(userInfo);
         if (rows > 0){return true;}
         else {return false;}
+    }
+    /**
+     * 批量插入
+     * @param saveBeanUserInfoRole
+     * @return
+     */
+    @Override
+    public boolean insertBatch(SaveBeanUserInfoRole saveBeanUserInfoRole) {
+        if (null == saveBeanUserInfoRole.getUid() || "".equals(saveBeanUserInfoRole.getUid())) {
+            return false;
+        }
+        //首先删除当前用户的角色
+        int batch = userInfoMapper.deleteBatch(saveBeanUserInfoRole.getUid());
+
+        //拼装批量插入需要的对象
+        List<UserRoleInfo> userRoleInfos = new ArrayList<>();
+
+        saveBeanUserInfoRole.getRoleInfoIds().stream().forEach(roleid->{
+            UserRoleInfo userRoleInfo = new UserRoleInfo();
+            userRoleInfo.setYcUserId(saveBeanUserInfoRole.getUid())
+                    .setYcRoleId(roleid);
+            userRoleInfos.add(userRoleInfo);
+        });
+        int rows = userInfoMapper.insertBatch(userRoleInfos);
+        return rows > 0;
     }
 }

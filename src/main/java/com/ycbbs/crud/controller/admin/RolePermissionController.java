@@ -22,7 +22,7 @@ public class RolePermissionController {
 
     @CrossOrigin
     @RequestMapping(value="/getAuth",method = RequestMethod.GET)
-//    @RequiresPermissions("rolePermission:delete")
+//    @RequiresPermissions("rolePermission:getAuth")
     public YcBbsResult getAuthAll(String roleid) throws CustomException {
         if(null == roleid){
             return YcBbsResult.build(1000,"Token失效");

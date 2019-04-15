@@ -2,8 +2,10 @@ package com.ycbbs.crud.service;
 
 
 import com.github.pagehelper.PageInfo;
+import com.ycbbs.crud.entity.RoleInfo;
 import com.ycbbs.crud.entity.UserInfo;
 import com.ycbbs.crud.entity.querybean.QueryBeanUserInfo;
+import com.ycbbs.crud.entity.querybean.SaveBeanUserInfoRole;
 import com.ycbbs.crud.exception.CustomException;
 
 import java.util.List;
@@ -55,4 +57,10 @@ public interface UserInfoService {
      * @param userInfo
      */
     boolean updateUserInfo(UserInfo userInfo);
+    /**
+     * 批量保存角色
+     * @param saveBeanUserInfoRole
+     * @return
+     */
+    boolean insertBatch(SaveBeanUserInfoRole saveBeanUserInfoRole);
 }

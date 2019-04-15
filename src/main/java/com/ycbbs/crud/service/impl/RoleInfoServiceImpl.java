@@ -48,29 +48,10 @@ public class RoleInfoServiceImpl implements RoleInfoService {
     @Override
     public List<RoleInfo> getRoleInfoList(QueryBeanRoleInfo queryBeanRoleInfo) throws CustomException {
 
-        if(null == queryBeanRoleInfo){
-            return null;
-        }
-
-        List<RoleInfo> roleInfos = roleInfoMapper.getRolePermissionList(queryBeanRoleInfo);
-
-//        Example example = new Example(RoleInfo.class);
-//        if(null != queryBeanRoleInfo){
-//            Example.Criteria criteria = example.createCriteria();
-//            //必须字段名以及搜索的值都不为空
-//            if (null != queryBeanRoleInfo.getKeyword() && !"".equals(queryBeanRoleInfo.getKeyword())) {
-//                criteria.andLike("name","%" + queryBeanRoleInfo.getKeyword()+ "%");
-//            }
-//            if (null != queryBeanRoleInfo.getDeleted() && !"".equals(queryBeanRoleInfo.getDeleted())) {
-//                criteria.andLike("deleted","%" + queryBeanRoleInfo.getDeleted()+ "%");
-//            }
+//        if(null == queryBeanRoleInfo){
+//            return null;
 //        }
-//        List<RoleInfo> roleInfos = roleInfoMapper.selectByExample(example);
-//        roleInfos.stream().forEach(roleInfo -> {
-//            //获取权限
-//            List<PermissionInfo> permissionList = roleInfoMapper.getByRolePermissionList(roleInfo.getId());
-//            roleInfo.setPermissionInfos(permissionList);
-//        });
+        List<RoleInfo> roleInfos = roleInfoMapper.getRolePermissionList(queryBeanRoleInfo);
         return roleInfos;
     }
 

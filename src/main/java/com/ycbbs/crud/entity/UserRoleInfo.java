@@ -16,18 +16,14 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @Table(name="sys_user_role")
 public class UserRoleInfo implements Serializable {
-
-    @Id
-    private String id;
-    /**
-     * 角色id
-     */
-    private String ycRoleId;
     /**
      * 用户id
      */
     private String ycUserId;
-
+    /**
+     * 角色id
+     */
+    private String ycRoleId;
     /**
      * 通用mybatis绑定时过滤此属性
      */

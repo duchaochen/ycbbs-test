@@ -17,6 +17,66 @@
         <result column="imgpath" property="imgpath" />
         <result column="salt" property="salt" />
         <result column="locked" property="locked" />
+        <collection property="roleInfos" ofType="com.ycbbs.crud.entity.RoleInfo"
+            select="getRoleList" column="uid"/>
     </resultMap>
+
+    <!--查询角色以及角色权限-->
+    <select id="getUserRoleList" parameterType="com.ycbbs.crud.entity.querybean.QueryBeanUserInfo"
+            resultMap="userInfoMap">
+        SELECT * FROM sys_user a
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (a.name like '%' + #{keyword} + '%' or a.realname like '%' + #{keyword} + '%')
+            </if>
+            <if test="state != null and state != ''">
+                and a.state = #{state}
+            </if>
+            <if test="locked != null and locked != ''">
+                and a.locked = #{locked}
+            </if>
+            <if test="completed != null and completed != ''">
+                and a.completed = #{completed}
+            </if>
+            <if test="deleted != null and deleted != ''">
+                and a.deleted=#{deleted}
+            </if>
+        </where>
+        ORDER BY a.uid
+    </select>
+
+    <resultMap id="roleInfoMap" type="com.ycbbs.crud.entity.RoleInfo">
+        <id column="roleid" property="id" />
+        <result column="rolename" property="name" />
+        <result column="deleted" property="deleted" />
+        <!-- ofType指定permissionInfos集合中的对象类型 column表示级联查询的roleid-->
+        <collection property="permissionInfos" ofType="com.ycbbs.crud.entity.PermissionInfo"
+                    select="com.ycbbs.crud.mapper.RoleInfoMapper.getByRolePermissionList" column="roleid">
+        </collection>
+    </resultMap>
+
+    <select id="getRoleList" parameterType="java.lang.String" resultMap="roleInfoMap">
+        SELECT b.* FROM `sys_user_role` a,sys_role b
+        WHERE a.yc_role_id=b.id
+        AND a.yc_user_id=#{uid}
+    </select>
+    <!--删除用户下的所有角色-->
+    <delete id="deleteBatch" parameterType="java.lang.String">
+        delete FROM sys_user_role where yc_user_id=#{uid}
+    </delete>
+
+    <!--批量添加
+        存在就更新REPLACE INTO 表名(字段1, 字段2, ...) VALUES(值1, 值2, ...), (值1, 值2, ...)
+        存在就忽略INSERT IGNORE 表名
+    -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO sys_user_role
+        (yc_user_id,yc_role_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.ycUserId},#{item.ycRoleId})
+        </foreach>
+    </insert>
+
 
 </mapper>
