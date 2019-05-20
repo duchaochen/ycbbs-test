@@ -15,7 +15,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api")
+@RequestMapping("/ycbbs")
 @RestController
 public class LoginController {
 
@@ -46,7 +46,7 @@ public class LoginController {
      */
     @CrossOrigin
     @PostMapping("/loginApp")
-    public YcBbsResult login(@RequestBody UserInfo user) throws Exception {
+    public YcBbsResult login(@RequestBody UserInfo user) throws CustomException {
         //必须先查询，要不然密码加盐的算法没办法匹配上
         UserInfo userInfo = userInfoService.selectUserInfoByUserName("",user.getUsername());
         if(userInfo == null){
@@ -83,7 +83,7 @@ public class LoginController {
     }
 
     /**
-     * 情况缓存
+     * 清空缓存
      * @return
      * @throws Exception
      */

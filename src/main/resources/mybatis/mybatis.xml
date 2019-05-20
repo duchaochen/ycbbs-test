@@ -25,5 +25,6 @@
         <mapper resource="mybatis/mappers/PermissionInfoMapper.xml"/>
         <mapper resource="mybatis/mappers/RoleInfoMapper.xml"/>
         <mapper resource="mybatis/mappers/UserInfoMapper.xml"/>
+        <mapper resource="mybatis/mappers/QuestionsInfoMapper.xml"/>
     </mappers>
 </configuration>

@@ -23,23 +23,23 @@
         <property name="filterChainDefinitions">
             <value>
                 <!-- 所有匿名访问 -->
-                /api/validateUserName = anon
-                /api/loginApp = anon
-                /api/register = anon
-                /api/rememberMe = anon
-                /api/validateEmail = anon
-                /api/validateTelephone = anon
-                /api/validatePassword = anon
-                /api/validateConfirmPassWord = anon
+                /ycbbs/validateUserName = anon
+                /ycbbs/loginApp = anon
+                /ycbbs/register = anon
+                /ycbbs/rememberMe = anon
+                /ycbbs/validateEmail = anon
+                /ycbbs/validateTelephone = anon
+                /ycbbs/validatePassword = anon
+                /ycbbs/validateConfirmPassWord = anon
                 /index.jsp = anon
-                /api/active = anon
-                /api/ = anon
-                /api/logout = anon
-                /api/permission/menuList = anon
+                /ycbbs/active = anon
+                /ycbbs/ = anon
+                /ycbbs/logout = anon
+                /ycbbs/permission/menuList = anon
 
                 <!--以下为暂时放开为匿名方式-->
-                /api/permission/* = anon
-                /api/role/* = anon
+                <!--/ycbbs/exmcourse/* = anon-->
+                <!--/ycbbs/role/* = anon-->
 
                 <!--退出,请求 /logout地址，shiro去清除session-->
                 <!--/logout = logout-->

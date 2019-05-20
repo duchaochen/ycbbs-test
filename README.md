@@ -240,7 +240,7 @@
                 <url-pattern>/*</url-pattern>
             </filter-mapping>
      
-     6.@RequiresPermissions使用
+     6.@RequiresPermissions使用（如果没有加这个注解的方法，只要认证通过了之后都可以访问,否则直接访问会报错）
         6.1)在自定义的CustomRealm类中的授权方法中添加：
             simpleAuthorizationInfo.addStringPermission("item:update");（这里写的是死的，也可以将数据库中获取的动态add到simpleAuthorizationInfo中）
           表示用户有此权限那么在请求的方法上添加@RequiresPermissions("item:update")表示该方法是可以授权通过的。

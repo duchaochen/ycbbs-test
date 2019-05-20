@@ -74,6 +74,7 @@ public class AuthRealm extends AuthorizingRealm {
             List<PermissionInfo> menuInfo = permissionInfoService.getMenuInfo(userInfo.getUid());
             activeUser.setUsername(userInfo.getUsername());
             activeUser.setRealname(userInfo.getRealname());
+            activeUser.setImgpath(userInfo.getImgpath());
 //            activeUser.setPassword(userInfo.getPassword());
             activeUser.setMenus(menuInfo);
             activeUser.setUserid(userInfo.getUid());

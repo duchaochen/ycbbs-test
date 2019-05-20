@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycbbs.crud.mapper.QuestionsInfoMapper">
+
+
+    <resultMap id="questionsInfoMap" type="com.ycbbs.crud.entity.QuestionsInfo">
+        <id column="question_id" property="questionId" />
+        <result column="question_Name" property="questionName" />
+        <result column="question_Level" property="questionLevel" />
+        <result column="question_owner" property="questionOwner" />
+        <result column="tag" property="tag" />
+        <result column="EXT_1" property="ext1" />
+        <result column="EXT_2" property="ext2" />
+        <result column="EXT_3" property="ext3" />
+        <result column="remarks" property="remarks" />
+        <result column="status" property="status" />
+        <result column="doneDate" property="doneDate" />
+        <result column="question_courseId" property="questionCourseId" />
+        <!--一对一-->
+        <association property="exmCourseInfo" javaType="com.ycbbs.crud.entity.ExmCourseInfo">
+            <id column="question_courseId" property="courseId"/>
+            <result column="course_name" property="courseName"/>
+            <result column="course_type" property="courseType"/>
+        </association>
+
+    </resultMap>
+
+    <select id="getQuestionsInfoList" parameterType="com.ycbbs.crud.entity.querybean.QueryBeanQuestionsInfo"
+            resultMap="questionsInfoMap">
+        SELECT * FROM answer_questionsInfo a LEFT JOIN answer_exmCourse b ON a.question_courseId=b.course_id
+        <where>
+            <if test="questionName != null">
+                and a.question_Name like '%' + #{questionName} + '%'
+            </if>
+            <if test="questionLevel != null">
+                and a.question_Level=#{questionLevel}
+            </if>
+            <if test="questionCourseId != null">
+                and a.question_courseId=#{questionCourseId}
+            </if>
+            <if test="questionOwner != null">
+                and a.question_owner like '%' + #{questionOwner} + '%'
+            </if>
+            <if test="tag != null">
+                and a.tag like '%' + #{tag} + '%'
+            </if>
+            <if test="status != null">
+                and a.status=#{status}
+            </if>
+            <if test="doneDate != null">
+                and DATE_FORMAT(a.doneDate, '%Y-%m-%d');=#{doneDate}
+            </if>
+        </where>
+    </select>
+</mapper>

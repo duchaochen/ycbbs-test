@@ -27,6 +27,10 @@ public class ActiveUser implements java.io.Serializable {
 	 */
 	private String realname;
 	/**
+	 * 图片
+	 */
+	private String imgpath;
+	/**
 	 * 菜单
 	 */
 	private List<PermissionInfo> menus;
@@ -34,6 +38,14 @@ public class ActiveUser implements java.io.Serializable {
 	 * 权限
 	 */
 	private List<PermissionInfo> permissions;
+
+	public String getImgpath() {
+		return imgpath;
+	}
+
+	public void setImgpath(String imgpath) {
+		this.imgpath = imgpath;
+	}
 
 	public String getPassword() {
 		return password;

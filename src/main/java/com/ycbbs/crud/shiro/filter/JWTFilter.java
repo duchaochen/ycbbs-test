@@ -34,8 +34,6 @@ import lombok.extern.slf4j.Slf4j;
  * @Title: JWTFilter.java
  * @Package com.tisson.demo.auth
  * @Description: TODO(用一句话描述该文件做什么)
- * @author Joker1995
- * @date 2018年11月8日
  * @version V1.0
  */
 @Slf4j

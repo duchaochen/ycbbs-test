@@ -5,19 +5,26 @@ import com.ycbbs.crud.entity.RoleInfo;
 import com.ycbbs.crud.entity.querybean.QueryBeanRoleInfo;
 import com.ycbbs.crud.pojo.YcBbsResult;
 import com.ycbbs.crud.service.RoleInfoService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/role")
+@RequestMapping("/ycbbs/role")
 @RestController
 public class RoleInfoController {
 
     @Autowired
     private RoleInfoService roleInfoService;
 
+    /**
+     * 查询角色
+     * @param queryBeanRoleInfo
+     * @return
+     * @throws Exception
+     */
     @CrossOrigin
     @GetMapping("/list")
-//    @RequiresPermissions("role:query")
+    @RequiresPermissions("role:query")
     public PageInfo<RoleInfo> queryRole(QueryBeanRoleInfo queryBeanRoleInfo) throws Exception {
         PageInfo<RoleInfo> roleInfoKeyList = roleInfoService.getRoleInfoPageList(queryBeanRoleInfo);
         return roleInfoKeyList;
@@ -45,9 +52,15 @@ public class RoleInfoController {
         return YcBbsResult.build(200,"用户名可以使用!!!");
     }
 
+    /**
+     * 角色添加
+     * @param roleInfo
+     * @return
+     * @throws Exception
+     */
     @CrossOrigin
     @PostMapping("/add")
-//    @RequiresPermissions("role:create")
+    @RequiresPermissions("role:create")
     public YcBbsResult addPermission(@RequestBody RoleInfo roleInfo) throws Exception {
         boolean b = roleInfoService.insertRoleInfo(roleInfo);
         if (b) {
@@ -56,9 +69,15 @@ public class RoleInfoController {
         return YcBbsResult.build(200,"新增失败");
     }
 
+    /**
+     * 角色修改
+     * @param roleInfo
+     * @return
+     * @throws Exception
+     */
     @CrossOrigin
     @PostMapping("/update")
-//    @RequiresPermissions("role:update")
+    @RequiresPermissions("role:update")
     public YcBbsResult updatePermission(@RequestBody RoleInfo roleInfo) throws Exception {
         if(null == roleInfo.getId()){
             return YcBbsResult.build(500,"无法找到要更新的对应项!!!");
@@ -70,9 +89,15 @@ public class RoleInfoController {
         return YcBbsResult.build(200,"更新失败");
     }
 
+    /**
+     * 删除角色
+     * @param roleInfo
+     * @return
+     * @throws Exception
+     */
     @CrossOrigin
     @GetMapping("/delete")
-//    @RequiresPermissions("role:delete")
+    @RequiresPermissions("role:delete")
     public YcBbsResult deletePermission(RoleInfo roleInfo) throws Exception {
         if(null == roleInfo.getId()){
             return YcBbsResult.build(500,"无法找到要删除的对应项!!!");
