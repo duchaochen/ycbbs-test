@@ -18,6 +18,7 @@ import com.ycbbs.crud.exception.CustomException;
 import com.ycbbs.crud.pojo.YcBbsResult;
 import com.ycbbs.crud.shiro.jwt.JWTToken;
 import com.ycbbs.crud.shiro.jwt.JWTUtil;
+import com.ycbbs.crud.utils.PublicUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;

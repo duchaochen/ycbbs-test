@@ -26,10 +26,20 @@
     <!--将springmvc不能处理的请求交给tomcat-->
     <mvc:default-servlet-handler/>
 
-    <!--使用最新的适配器和映射器功能-->
+    <!--使用最新的适配器和映射器功能，启用注解-->
     <mvc:annotation-driven/>
 
     <!--全局异常-->
     <bean class="com.ycbbs.crud.exception.CustomExceptionResolver"/>
 
+    <!--拦截器配置-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--拦截所有-->
+            <mvc:mapping path="/**"/>
+            <!--下面是不拦截配置-->
+            <!--<mvc:exclude-mapping path="/system/login" />-->
+            <bean class="com.ycbbs.crud.interceptor.InterceptorAll"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>
