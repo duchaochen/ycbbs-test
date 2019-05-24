@@ -13,7 +13,8 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/ycbbs/exmcourse")
+///ycbbs
+@RequestMapping("/exmcourse")
 public class ExmCourseController {
     @Autowired
     private ExmCourseService exmCourseService;

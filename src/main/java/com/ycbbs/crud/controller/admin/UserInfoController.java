@@ -9,9 +9,9 @@ import com.ycbbs.crud.service.UserInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+///ycbbs
 @RestController
-@RequestMapping("/ycbbs/users")
+@RequestMapping("/users")
 public class UserInfoController {
 
     @Autowired

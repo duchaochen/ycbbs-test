@@ -9,7 +9,7 @@
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
         <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，请求此地址将由formAuthenticationFilter进行表单认证 -->
-        <!--<property name="loginUrl" value="/loginUrl"/>-->
+        <property name="loginUrl" value="/"/>
         <!--通过unauthorizedUrl指定没有权限操作时跳转页面-->
         <!--<property name="unauthorizedUrl" value="/unauthorizedUrl"/>-->
         <!-- 自定义filter配置  -->
@@ -23,19 +23,20 @@
         <property name="filterChainDefinitions">
             <value>
                 <!-- 所有匿名访问 -->
-                /ycbbs/validateUserName = anon
-                /ycbbs/loginApp = anon
-                /ycbbs/register = anon
-                /ycbbs/rememberMe = anon
-                /ycbbs/validateEmail = anon
-                /ycbbs/validateTelephone = anon
-                /ycbbs/validatePassword = anon
-                /ycbbs/validateConfirmPassWord = anon
+                /login = anon
+                /validateUserName = anon
+                /loginApp = anon
+                /register = anon
+                /rememberMe = anon
+                /validateEmail = anon
+                /validateTelephone = anon
+                /validatePassword = anon
+                /validateConfirmPassWord = anon
                 /index.jsp = anon
-                /ycbbs/active = anon
-                /ycbbs/ = anon
-                /ycbbs/logout = anon
-                /ycbbs/permission/menuList = anon
+                /active = anon
+                / = anon
+                /logout = anon
+                /permission/menuList = anon
 
                 <!--以下为暂时放开为匿名方式-->
                 <!--/ycbbs/exmcourse/* = anon-->

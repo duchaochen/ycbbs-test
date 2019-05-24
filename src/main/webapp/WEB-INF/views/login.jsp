@@ -1,11 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Index</title>
+    <title>登录页面</title>
 </head>
 <body>
-    <h1><a href="/login">登录</a></h1>
+    登录
 </body>
-<script>
-</script>
 </html>

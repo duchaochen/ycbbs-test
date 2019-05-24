@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * 注册控制器
  */
-@RequestMapping("/ycbbs")
+//@RequestMapping("/ycbbs")
 @RestController
 public class RedisterController {
     @Autowired

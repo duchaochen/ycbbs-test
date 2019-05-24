@@ -14,13 +14,12 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("ycbbs")
+//@RequestMapping("ycbbs")
 @RestController
 public class LoginController {
 
     @Autowired
     private UserInfoService userInfoService;
-
     /**
      * 登陆
      * @param user
@@ -35,20 +34,20 @@ public class LoginController {
             throw new CustomException("用户传参为空传参错误");
         }
         //必须先查询，要不然密码加盐的算法没办法匹配上
-        UserInfo userInfo = userInfoService.selectUserInfoByUserName("",user.getUsername());
-        if(userInfo == null){
+        UserInfo userInfo = userInfoService.selectUserInfoByUserName("", user.getUsername());
+        if (userInfo == null) {
             //用户名不存在
             throw new UnknownAccountException();
         }
         //这里一定需要判断一下密码是否一致，要不然只需要用户名匹配就可以成功登录了。
-        Md5Hash md5Hash = new Md5Hash(user.getPassword(),userInfo.getSalt(),1);
+        Md5Hash md5Hash = new Md5Hash(user.getPassword(), userInfo.getSalt(), 1);
         String password = md5Hash.toString();
-        if(!password.equals(userInfo.getPassword())){
+        if (!password.equals(userInfo.getPassword())) {
             //密码错误
             throw new IncorrectCredentialsException();
         }
 
-        String token= JWTUtil.sign(user.getUsername(), password);
+        String token = JWTUtil.sign(user.getUsername(), password);
         Subject currentUser = SecurityUtils.getSubject();
         //表示是否登录过或者已经有了记住我
         if (!currentUser.isAuthenticated()) {
@@ -59,7 +58,7 @@ public class LoginController {
         System.out.println(currentUser.getPrincipals());
         System.out.println(currentUser.isAuthenticated());
 
-        return YcBbsResult.build(200,"认证成功",currentUser.getPrincipal(),token);
+        return YcBbsResult.build(200, "认证成功", currentUser.getPrincipal(), token);
     }
 
     @CrossOrigin

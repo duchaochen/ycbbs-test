@@ -9,9 +9,9 @@ import com.ycbbs.crud.service.QuestionsInfoSerivce;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+///ycbbs
 @RestController
-@RequestMapping("/ycbbs/questionsInfo")
+@RequestMapping("/questionsInfo")
 public class QuestionsInfoController {
     /**
      * 题目类型基本信息数据访问
