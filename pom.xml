@@ -16,7 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.version>5.1.3.RELEASE</spring.version>
     <tk.mapper.version>4.1.4</tk.mapper.version>
-    <shiro.version>1.2.3</shiro.version>
+    <shiro.version>1.6.0</shiro.version>
       <warPackageName>ycbbs</warPackageName>
       <tomcat.deploy.server>localTestServer</tomcat.deploy.server>
       <tomcat.deploy.serverUrl>http://localhost/manager/text</tomcat.deploy.serverUrl>
